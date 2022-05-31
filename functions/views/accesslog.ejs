@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title><%= title %></title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+      <a href="#" class="headerButton goBack">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      <%= title %>
+    </div>
+    <div class="right">
+      <a href="#" class="headerButton" onclick="clearLog()">Clear</a>
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+    <div id="toastSuccessTop" class="toast-box toast-top bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessTextTop"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button" >OKAY</button>
+    </div>
+
+    <div id="toastProcessing" class="toast-box toast-center">
+      <div class="in">
+        <div class="text" id="toastProcessingText">
+          <div class="spinner-border text-light" role="status"></div>
+          <br><br>
+          Please wait...
+        </div>
+      </div>
+    </div>
+
+    <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastError" class="toast-box toast-center bg-danger">
+      <div class="in">
+        <div class="text" id="toastErrorText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="section full">
+      <ul class="listview simple-listview" id="accessloglist"></ul>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+
+    window.addEventListener('load', () => {});
+
+    db.ref(`AccessLog`).limitToLast(40).on('value', (snapshot) => {
+      if(snapshot.val() != null) {
+        var logs = Object.values(snapshot.val());
+        // filter the logs first
+        var finalLogs = [];
+        var dNow = new Date();
+        var validator1 = `${dNow.getMonth()}${dNow.getFullYear()}`;
+        var validator2 = `${dNow.getMonth()-1}${dNow.getFullYear()}`;
+        if(dNow.getMonth() == 0) {
+          validator2 = `11${dNow.getFullYear()-1}`
+        }
+        logs.forEach(log => {
+          var logDate = new Date(log.time);
+          if(`${logDate.getMonth()}${logDate.getFullYear()}` == validator1 || `${logDate.getMonth()}${logDate.getFullYear()}` == validator2) {
+            finalLogs.push(log);
+          }
+        })
+  
+        finalLogs.sort((a,b) => (a.time < b.time) ? 1 : ((b.time < a.time) ? -1 : 0));
+        document.getElementById('accessloglist').innerText = '';
+        finalLogs.forEach(log => {
+          insertLog(log);
+        });
+      }
+      
+    }, (error) => {
+      console.log(error);
+    });
+
+    function insertLog(logData) {
+      var li = document.createElement('li');
+      var sn = document.createElement('strong');
+      sn.innerText = logData.name;
+      var br = document.createElement('br');
+      var ft = document.createElement('footer');
+      var logDate = new Date(logData.time);
+      let hrs = logDate.getHours();
+      let mins = logDate.getMinutes();
+      hrs = hrs < 10 ? "0" + hrs : hrs;
+      mins = mins < 10 ? "0" + mins : mins;
+      let dateNum = logDate.getDate();
+      dateNum = dateNum < 10 ? "0" + dateNum : dateNum;
+      let month = getMonthName(logDate.getMonth());
+      ft.innerText = `${logData.page} - ${dateNum}${hrs}${mins}H ${month}`;
+      // APPEND
+      li.appendChild(sn);
+      li.appendChild(br);
+      li.appendChild(ft);
+      document.getElementById(`accessloglist`).appendChild(li);
+    }
+
+    async function clearLog() {
+      toastbox('toastProcessing');
+      await axios.post('/clearlog').then(res => {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }, err => {
+        console.log(err);
+      });
+    }
+
+    function getMonthName(monthNum) {
+      switch(monthNum) {
+        case 0: return 'Jan'; break;
+        case 1: return 'Feb'; break;
+        case 2: return 'Mar'; break;
+        case 3: return 'Apr'; break;
+        case 4: return 'May'; break;
+        case 5: return 'Jun'; break;
+        case 6: return 'Jul'; break;
+        case 7: return 'Aug'; break;
+        case 8: return 'Sep'; break;
+        case 9: return 'Oct'; break;
+        case 10: return 'Nov'; break;
+        case 11: return 'Dec'; break;
+      }
+    }
+    
+  </script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

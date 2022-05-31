@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>Add Item</title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+      <a href="#" class="headerButton goBack">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      Add Item
+    </div>
+    <div class="right">
+      <a href="#" class="headerButton" id="saveBtn">
+        <ion-icon name="save-outline"></ion-icon>
+      </a>
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+    <div id="toastSuccessTop" class="toast-box toast-top bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessTextTop"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastProcessing" class="toast-box toast-center">
+      <div class="in">
+        <div class="text" id="toastProcessingText">
+          <div class="spinner-border text-light" role="status"></div>
+          <br><br>
+          Please wait...
+        </div>
+      </div>
+    </div>
+
+    <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessText">Item successfully saved!</div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button" onclick="resetAddItemForm()">OKAY</button>
+    </div>
+
+    <div id="toastError" class="toast-box toast-center bg-danger">
+      <div class="in">
+        <div class="text" id="toastErrorText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="section inset">
+      <div class="section-title small">Add an item to the database</div>
+      <div class="wide-block pt-2 pb-2">
+        
+        <div class="form-group basic animated">
+          <div class="input-wrapper">
+            <scan>Category</scan>
+            <select class="form-control" id="category"></select>
+          </div>
+          <div class="input-info">
+            What category does this item belongs to?
+          </div>
+        </div>
+
+        <div class="form-group basic animated">
+          <div class="input-wrapper">
+            <scan>Name</scan>
+            <input type="text" id="name" class="form-control">
+          </div>
+          <div class="input-info">
+            What is the proper title for this item?
+          </div>
+        </div>
+
+        <div class="form-group basic animated">
+          <div class="input-wrapper">
+            <scan>Price</scan>
+            <input type="number" id="price" class="form-control">
+          </div>
+          <div class="input-info">
+            What is the selling price? (No centavo)
+          </div>
+        </div>
+        
+        <div class="form-group basic animated">
+          <div class="input-wrapper">
+            <scan>Image</scan>
+            <input type="text" id="image" class="form-control">
+          </div>
+          <div class="input-info">
+            Paste here the Dropbox URL of the image
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+
+    // LISTENERS
+    db.ref('Categories').on('value', snapshot => {
+      document.getElementById('category').innerText = '';
+      var blankOpt = document.createElement('option');
+      blankOpt.setAttribute('value', 'others');
+      blankOpt.innerText = 'Select Category';
+      blankOpt.selected = true;
+      blankOpt.disabled = true;
+      document.getElementById('category').appendChild(blankOpt);
+      Object.values(snapshot.val()).forEach(catData => {
+        insertCategory(catData);
+      });
+    }, err => {
+      console.log(err);
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      if(allFieldsFilled()) {
+        toastbox('toastProcessing');
+        var newKey = db.ref('Items').push().getKey();
+        await db.ref(`Items/${newKey}`).set({
+          category: document.getElementById('category').value,
+          id: toCamelCase(document.getElementById('name').value),
+          image: document.getElementById('image').value,
+          name: document.getElementById('name').value,
+          price: parseInt(document.getElementById('price').value),
+          available: 'yes',
+          dbId: newKey
+        });
+        setTimeout(function(){ toastbox('toastSuccess'); }, 1000);
+      } else {
+        toastErrorText.innerText = "Please fill-out all fields.";
+        toastbox('toastError');
+      }
+    });
+
+    // FUNCTIONS
+    function insertCategory(catData) {
+      var opt = document.createElement('option');
+      opt.setAttribute('value', catData.id);
+      opt.innerText = catData.title;
+      document.getElementById('category').appendChild(opt);
+    }
+
+    function allFieldsFilled() {
+      if(document.getElementById('name').value == '' || document.getElementById('price').value == '' || document.getElementById('image').value == '') {
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    function toCamelCase(str) {
+      return str.replace(/(?:^\w|[A-Z]|\b\w)/g, function(word, index) {
+        return index === 0 ? word.toLowerCase() : word.toUpperCase();
+      }).replace(/\s+/g, '');
+    }
+    
+    function resetAddItemForm() {
+      document.getElementById('category').selectedIndex = 0;
+      document.getElementById('name').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('image').value = '';
+    }
+    
+  </script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>Inventory</title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body style="display: none;">
+  
+  <input type="hidden" id="pin" value="<%= pin%>" />
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-danger text-light">
+    <div class="left">
+      <a href="/admin" class="headerButton">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      Inventory
+    </div>
+    <div class="right">
+      <a href="/additem" class="headerButton">
+        <ion-icon name="add-circle-outline"></ion-icon>
+      </a>
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+
+    <!-- Items -->
+    <div class="section full" id="store">
+      <div class="section-title medium">PX Items</div>
+      <h5 class="ml-2 mr-2">Turn on button if item is available. Turn off if not. You can also edit the price of each item just change the value. Click the add icon button above to add a new item to the database.</h5>
+      <div class="accordion" id="items"></div>
+    </div>
+    <!-- * Items -->
+
+    <div class="section full mt-3 p-2">
+      <button class="btn btn-block btn-primary rounded shadowed" id="goToStoreBtn">Go to Store</button>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="text/javascript" src="/qrcode-generator/qrcode.js"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    
+    var pin = parseInt(document.getElementById('pin').value);
+    var categories = [];
+    var admins;
+    var mySn;
+    var thePin;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      getAdmins().then(admins => {
+        checkCredentials(admins, pin);
+        document.getElementById('goToStoreBtn').setAttribute('onclick', `window.location = '/store/${mySn}'`);
+        db.ref('Categories').once('value').then(snapshot => {
+          document.getElementById('items').innerText = '';
+          Object.values(snapshot.val()).forEach(catData => {
+            categories.push(catData.id);
+            insertCategory(catData);
+          });
+  
+          db.ref('Items').once('value').then(snapshot => {
+            categories.forEach(cat => {
+              document.getElementById(`box-${cat}`).innerText = '';
+            });
+            Object.values(snapshot.val()).forEach(itemData => {
+              insertItems(itemData);
+            });
+          });
+        });
+      });
+    });
+
+    // FUNCTIONS
+    async function getAdmins() {
+      let admins;
+      await db.ref('Admins').once('value').then(snapshot => {
+        admins = Object.values(snapshot.val());
+      });
+      return Promise.resolve(admins);
+    }
+    
+    function checkCredentials(admins, pin) {
+      document.body.style.display = 'none';
+      mySn = window.prompt('Enter your Serial Number: ');
+      if(admins.includes(parseInt(mySn))) {
+        var myPin = window.prompt('Enter PX Pin: ');
+        if(parseInt(myPin) == pin) {
+          document.body.style.display = 'block';
+        } else {
+          var ansP = confirm('Wrong PIN!');
+          ansP ? window.location = '/admin' : window.location = '/admin';
+        }
+      } else {
+        var ansP = confirm('You are not allowed to view this page!');
+        ansP ? window.location = '/admin' : window.location = '/admin';
+      }
+    }
+    
+    function insertCategory(catData) {
+      var item = document.createElement('div');
+      item.setAttribute('class', 'item');
+      var ah = document.createElement('div');
+      ah.setAttribute('class', 'accordion-header');
+      var ab = document.createElement('div');
+      ab.setAttribute('class', 'accordion-body collapse');
+      ab.setAttribute('id', `id-${catData.id}`);
+      ab.setAttribute('data-parent', '#items');
+      var ahbtn = document.createElement('button');
+      ahbtn.setAttribute('class', 'btn collapsed');
+      ahbtn.setAttribute('type', 'button');
+      ahbtn.setAttribute('data-toggle', 'collapse');
+      ahbtn.setAttribute('data-target', `#id-${catData.id}`);
+      ahbtn.innerText = `${catData.title}`;
+      var ac = document.createElement('div');
+      ac.setAttribute('class', 'accordion-content');
+
+      var ul = document.createElement('ul');
+      ul.setAttribute('class', 'listview image-listview');
+      ul.setAttribute('id', `box-${catData.id}`);
+
+      // APPEND
+      ac.appendChild(ul);
+      ab.appendChild(ac);
+      ah.appendChild(ahbtn);
+      item.appendChild(ah);
+      item.appendChild(ab);
+      document.getElementById('items').appendChild(item);
+    }
+    
+    function insertItems(itemData) {
+      var li = document.createElement('li');
+      var itemDiv = document.createElement('div');
+      var itemImg = document.createElement('img');
+      var inDiv = document.createElement('div');
+      var itemNameDiv = document.createElement('div');
+      itemNameDiv.innerHTML = `<span>${itemData.name}</span>`;
+      
+      itemDiv.setAttribute('class', 'item');
+      itemImg.setAttribute('class', 'imaged w48 square');
+      itemImg.setAttribute('src', dropboxURL(itemData.image));
+      inDiv.setAttribute('class', 'in');
+
+      var inputPrice = document.createElement('input');
+      inputPrice.setAttribute('class', 'form-control');
+      inputPrice.setAttribute('style', 'width: 50px;');
+      inputPrice.setAttribute('type', 'number');
+      inputPrice.setAttribute('value', itemData.price);
+      inputPrice.setAttribute('id', `idprice-${itemData.id}`);
+      inputPrice.setAttribute('onchange', `changePrice('${itemData.dbId}', this.value)`);
+
+      var checkBtn = document.createElement('div');
+      checkBtn.setAttribute('class', 'custom-control custom-switch');
+      var inputCheckBox = document.createElement('input');
+      inputCheckBox.setAttribute('type', 'checkbox');
+      inputCheckBox.setAttribute('class', 'custom-control-input');
+      inputCheckBox.setAttribute('id', `idcheck-${itemData.id}`);
+      if(itemData.available == 'yes') {
+        inputCheckBox.checked = true;
+      } else {
+        inputCheckBox.checked = false;
+      }
+      inputCheckBox.setAttribute('onchange', `changeAvailability('${itemData.dbId}', this.checked)`);
+
+      var labelCheck = document.createElement('label');
+      labelCheck.setAttribute('class', 'custom-control-label');
+      labelCheck.setAttribute('for', `idcheck-${itemData.id}`);
+      checkBtn.appendChild(inputCheckBox);
+      checkBtn.appendChild(labelCheck);
+
+      // APPEND
+      inDiv.appendChild(itemNameDiv);
+      inDiv.appendChild(inputPrice);
+      inDiv.appendChild(checkBtn);
+      itemDiv.appendChild(itemImg);
+      itemDiv.appendChild(inDiv);
+      li.appendChild(itemDiv);
+      document.getElementById(`box-${itemData.category}`).appendChild(li);
+    }
+
+    function changePrice(dbId, price) {
+      db.ref(`Items/${dbId}/price`).set(parseInt(price));
+      console.log(`${dbId} changed price to ${price}`);
+    }
+
+    function changeAvailability(dbId, yesOrNo) {
+      if(yesOrNo) {
+        db.ref(`Items/${dbId}/available`).set('yes');
+        console.log(`${dbId} changed availability to yes`);
+      } else {
+        db.ref(`Items/${dbId}/available`).set('no');
+        console.log(`${dbId} changed availability to no`);
+      }
+    }
+
+    function dropboxURL(link) {
+      var base = link.split('?')[0];
+      var fileId = base.split('/')[4];
+      var fileName = base.split('/')[5]; 
+      return `https://dl.dropboxusercontent.com/s/${fileId}/${fileName}`;
+    }
+    
+  </script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

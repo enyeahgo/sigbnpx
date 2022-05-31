@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>User Initialization</title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+  <input type="hidden" value="<%= uid%>" id="uid" />
+  <input type="hidden" value="<%= mobile%>" id="mobile" />
+  <input type="hidden" value="<%= mytopic%>" id="mytopic" />
+  <input type="hidden" value="<%= device%>" id="device" />
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+    </div>
+    <div class="pageTitle">
+      Welcome
+    </div>
+    <div class="right">
+      <!-- <a href="#" class="headerButton" >Next</a> -->
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+    <div id="toastSuccessTop" class="toast-box toast-top bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessTextTop"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastProcessing" class="toast-box toast-center">
+      <div class="in">
+        <div class="text" id="toastProcessingText">
+          <div class="spinner-border text-light" role="status"></div>
+          <br><br>
+          Please wait...
+        </div>
+      </div>
+    </div>
+
+    <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastError" class="toast-box toast-center bg-danger">
+      <div class="in">
+        <div class="text" id="toastErrorText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="col-sm-6">
+
+          <div class="section inset" id="details">
+            <div class="section-title small">Just some quick important account settings to get you started</div>
+            <div class="wide-block pt-2 pb-2">
+              <div class="form-group basic">
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="fname" placeholder="First Name" />
+                </div>
+                <div class="input-info">
+                  Your Firstname
+                </div>
+              </div>
+              <div class="form-group basic">
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="lname" placeholder="Last Name" />
+                </div>
+                <div class="input-info">
+                  Your Lastname
+                </div>
+              </div>
+              <div class="form-group basic">
+                <div class="input-wrapper">
+                  <input type="text" class="form-control" id="loc" placeholder="Unit or Location" />
+                </div>
+                <div class="input-info">
+                  Where you want your orders delivered? Example 6Cav or CPSH or HHSBn etc. Delivery point can be changed later on in your account settings.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section inset mt-2">
+            <button class="btn btn-block btn-success rounded shadowed" id="nextBtn">Next</button>
+          </div>
+      
+          <!-- <div class="section inset" id="mapchooser">
+            <div class="section-title small">
+              Where to deliver? Click on the map to get the coordinates.
+              <br>
+              <span class="text-success" id="coordinates"></span>
+            </div>
+            <div class="wide-block pt-2 pb-2">
+              <div id="googleMap" style="width:100%;height:300px;"></div>
+            </div>
+            <input type="hidden" id="myLat" />
+            <input type="hidden" id="myLong" />
+          </div> -->
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+
+    const uid = document.getElementById('uid').value;
+    const mobile = document.getElementById('mobile').value;
+    const mytopic = document.getElementById('mytopic').value;
+    const device = document.getElementById('device').value;
+
+    window.addEventListener('load', () => {});
+
+    // LISTENERS
+    document.getElementById('nextBtn').addEventListener('click', async () => {
+      if(allFieldsFilled()) {
+        document.getElementById('details').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+        // document.getElementById('mapchooser').style.display = 'none';
+        toastbox('toastProcessing');
+        let d = new Date();
+        await db.ref(`Users/${uid}`).set({
+          uid: uid,
+          mobile: mobile,
+          fname: document.getElementById('fname').value,
+          lname: document.getElementById('lname').value,
+          location: document.getElementById('loc').value,
+          lat: '11.391439',
+          long: '122.439579',
+          latLong: '11.391439, 122.439579',
+          firstOrder: 'yes',
+          joined: parseInt(d.getTime()),
+          device: device,
+          orders: 0,
+          locSet: 'no',
+          mytopic: mytopic
+        });
+        window.location = '/notifoffer';
+      } else {
+        toastErrorText.innerText = "You must first provide your first name, last name and delivery point.";
+        toastbox('toastError');
+      }
+    });
+
+    // FUNCTIONS
+
+    // function myMap() {
+    //   var mapProp= {
+    //       center: new google.maps.LatLng(11.391976, 122.442568),
+    //       zoom: 15,
+    //       mapTypeId: 'satellite'
+    //   };
+    //   var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+    //   google.maps.event.addListener(map, 'click', function(event) {
+    //     document.getElementById('nextBtn').style.opacity = 0;
+    //     setTimeout(()=>{
+    //       document.getElementById('nextBtn').style.opacity = 1;
+    //     }, 200);
+    //     document.getElementById('myLat').value = event.latLng.lat();
+    //     document.getElementById('myLong').value = event.latLng.lng();
+    //     document.getElementById('coordinates').innerText = event.latLng.lat() + ", " + event.latLng.lng();
+    //   });
+    // }
+
+    // function allFieldsFilled() {
+    //   if(document.getElementById('fname').value == '' || document.getElementById('lname').value == '' || document.getElementById('myLat').value == '' || document.getElementById('myLong').value == '') {
+    //     return false;
+    //   } else {
+    //     return true;
+    //   }
+    // }
+    function allFieldsFilled() {
+      if(document.getElementById('fname').value == '' || document.getElementById('lname').value == '' || document.getElementById('loc').value == '') {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    
+    function getMonthName(monthNum) {
+      switch (monthNum) {
+        case 0: return 'Jan'; break;
+        case 1: return 'Feb'; break;
+        case 2: return 'Mar'; break;
+        case 3: return 'Apr'; break;
+        case 4: return 'May'; break;
+        case 5: return 'Jun'; break;
+        case 6: return 'Jul'; break;
+        case 7: return 'Aug'; break;
+        case 8: return 'Sep'; break;
+        case 9: return 'Oct'; break;
+        case 10: return 'Nov'; break;
+        case 11: return 'Dec'; break;
+      }
+    }
+    
+    function getDayName(dayNum) {
+      switch (dayNum) {
+        case 1: return 'Mon'; break;
+        case 2: return 'Tue'; break;
+        case 3: return 'Wed'; break;
+        case 4: return 'Thu'; break;
+        case 5: return 'Fri'; break;
+        case 6: return 'Sat'; break;
+        case 0: return 'Sun'; break;
+      }
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+  </script>
+
+  <!-- <script src="https://maps.googleapis.com/maps/api/js?key=&callback=myMap"></script> -->
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

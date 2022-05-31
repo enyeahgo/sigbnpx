@@ -1,0 +1,10 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "xyz.appmaker.alitik",
+      "sha256_cert_fingerprints": ["C9:A4:32:CC:2C:90:CF:5E:A2:7F:B1:08:1C:D8:3E:BE:DB:D3:89:E2:BC:F1:2F:BF:44:85:1A:3A:80:D7:4A:3F"]
+    }
+  }
+]

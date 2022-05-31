@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>6CAV PX ONLINE</title>
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="6CAV PX ONLINE">
+  <meta name="description" content="Online Post Concessionaire of 6Cav Coy. Order now and get your items delivered to your doorsteps.">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://sixcavcoypx.web.app">
+  <meta property="og:title" content="6CAV PX ONLINE">
+  <meta property="og:description" content="Online Post Concessionaire of 6Cav Coy. Order now and get your items delivered to your doorsteps.">
+  <meta property="og:image" content="<%= seoImage%>">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://sixcavcoypx.web.app">
+  <meta property="twitter:title" content="6CAV PX ONLINE">
+  <meta property="twitter:description" content="Online Post Concessionaire of 6Cav Coy. Order now and get your items delivered to your doorsteps.">
+  <meta property="twitter:image" content="<%= seoImage%>">
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="manifest" href="/__manifest.json">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body id="top">
+
+  <input type="hidden" value="<%= isLoggedIn%>" id="isLoggedIn" />
+  <input type="hidden" value="<%= JSON.stringify(userdata)%>" id="userdata" />
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+      <a href="https://m.me/sixcavcoy" class="headerButton">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      6CAV PX
+    </div>
+    <div class="right">
+      <% if (isLoggedIn == 'no') { %>
+        <a href="/register" class="headerButton">
+          Join/Login
+        </a>
+      <% } %> 
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+      <div id="toastTopWarning" class="toast-box toast-top bg-warning">
+        <div class="in">
+          <div class="text" id="toastTextTopWarning"></div>
+        </div>
+      </div>
+      
+      <div id="toastTopInfo" class="toast-box toast-top bg-info">
+        <div class="in">
+          <div class="text" id="toastTextTopInfo"></div>
+        </div>
+      </div>
+
+      <div id="toastTopSuccess" class="toast-box toast-top bg-success">
+        <div class="in">
+          <div class="text" id="toastTextTopSuccess"></div>
+        </div>
+      </div>
+
+      <div id="toastProcessing" class="toast-box toast-center">
+        <div class="in">
+          <div class="text">
+            <div class="spinner-border text-light" role="status"></div>
+            <br><br>
+            <span id="toastProcessingText">Please wait...</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+        <div class="in">
+          <div class="text" id="toastSuccessText"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+      </div>
+
+      <div id="toastError" class="toast-box toast-center bg-danger">
+        <div class="in">
+          <div class="text" id="toastErrorText"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+      </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <marquee class="mt-1" behavior="scroll" direction="left"><h4 id="announcement"></h4></marquee>
+          <div class="section full">
+            <div class="section-title medium">What's New?</div>
+            <div class="carousel-single owl-carousel owl-theme">
+              <% whatsnew.forEach(wnData => { %>
+               <div class="item">
+                <div class="card" onclick="window.location = '<%= wnData.link%>'">
+                  <img src="<%= wnData.pic%>" class="card-img-top" alt="image" style="border-radius: 5%;">
+                  <div class="card-img-overlay" style="display: flex;">
+                    <span class="card-title" style="align-self: flex-end;">
+                      <%= wnData.title%>
+                      <br>
+                      <small><%= wnData.content%></small>
+                    </span>
+                  </div>
+                </div>
+               </div>
+              <% }) %>
+            </div>
+          </div>
+          <div class="section inset mt-2">
+            <div class="text-center">
+              <button class="btn btn-sm btn-outline-danger rounded shadowed" id="pasabuyBtn" onclick="notifyToLogin('You need to login or register to use PasaBuy')">
+                <ion-icon name="bicycle-outline"></ion-icon>&nbsp;PasaBuy
+              </button>
+              &nbsp;&nbsp;
+              <button class="btn btn-sm btn-outline-warning rounded shadowed" onclick="window.location = 'https://m.me/sixcavcoy';">
+                <ion-icon name="chatbubbles-outline"></ion-icon>&nbsp;Chat With Us
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="col-sm-6">
+          <div class="section full mt-2">
+            <div class="section-title medium">Check our variety of items</div>
+            <div class="ml-2 text-muted"><h6>Operating Hours: <u>0600h - 2000h Daily</u></h6></div>
+            <div class="ml-2 text-muted"><h6>Delivery: <u>Within Camp Peralta Only</u></h6></div>
+            <div class="accordion" id="items"></div>
+          </div>
+          <div class="mt-2 mb-2 text-center">
+            <span id="buttons"></span>
+          </div>
+        </div>
+        <% if (isLoggedIn == 'yes') { %>
+        <div class="col-sm-6">
+
+            <span id="orders">&nbsp;<br><br></span>
+        
+             <div class="section full mt-2">
+               <div class="section-title medium">My Orders</div>
+               <div class="wide-block p-0">
+                 <div class="table-responsive">
+                     <table class="table table-striped">
+                         <thead>
+                             <tr>
+                                 <th scope="col" class="text-center">Date</th>
+                                 <th scope="col">Items</th>
+                                 <th scope="col" class="text-right">Amount</th>
+                                 <th scope="col" class="text-center">Status</th>
+                             </tr>
+                         </thead>
+                         <tbody id="trbody"></tbody>
+                     </table>
+                 </div>
+               </div>
+             </div>
+
+             <div class="section full mt-2">
+               <div class="section-title medium">My Pasabuy Orders</div>
+               <div class="wide-block p-0">
+                 <div class="table-responsive">
+                     <table class="table table-striped">
+                         <thead>
+                             <tr>
+                                 <th scope="col" class="text-center">Date</th>
+                                 <th scope="col">Instructions</th>
+                                 <th scope="col" class="text-center">Status</th>
+                             </tr>
+                         </thead>
+                         <tbody id="trbodyPB"></tbody>
+                     </table>
+                 </div>
+               </div>
+             </div>
+        
+            <span id="notifications">&nbsp;<br></span>
+        
+             <div class="section full mt-2">
+               <div class="section-title medium">Notifications</div>
+               <div class="text-muted ml-2"><h6>Get notified when your payment has been received and when our delivery personnel is already at your pick-up point. Also, you will be notified with the availability of PasaBuy.</h6></div>
+               <div class="wide-block pt-2 pb-2">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-8 text-left">
+                      Notifications:
+                    </div>
+                    <div class="col-4 text-right pr-2">
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="notifSwitch"/>
+                        <label class="custom-control-label" for="notifSwitch"></label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+             </div>
+        
+            <span id="settings">&nbsp;<br></span>
+        
+             <div class="section full mt-2 mb-5">
+              <div class="section-title medium">Settings</div>
+              <div class="wide-block pt-2 pb-2">
+        
+                <h5>HELLO  <i><%= `${userdata.fname.toUpperCase()} ${userdata.lname.toUpperCase()}`%></i>,</h5>
+                <button class="btn btn-block btn-outline-secondary rounded shadowed mt-1" onclick="window.location = '/changename'">Change Name</button>
+                <button class="btn btn-block btn-outline-success rounded shadowed mt-1" onclick="showHideMap()">Choose Pick-up Point</button>
+                
+                <small class="mt-1" id="mapNote" style="display: none;">If there's a Google warning just press OK</small>
+                <div id="googleMap" class="mt-2 mb-2" style="display: none; width:100%;height:300px;"></div>
+                <div class="text-center">
+                  <small class="text-success" id="coordinates"></small>
+                  <br>
+                  <button class="btn btn-sm btn-success rounded shadowed mb-2" id="saveCoords" style="display: none;">Save</button>
+                </div>
+                <input type="hidden" id="myLat" />
+                <input type="hidden" id="myLong" />
+        
+                <button class="btn btn-block btn-outline-danger rounded shadowed" onclick="window.location = '/logout'">Logout</button>
+                <div class="text-center mt-1">
+                  <small class="text-danger" data-toggle="modal" data-target="#deleteAccountConfirmation">Delete Account</small>
+                </div>
+        
+              </div>
+            </div>
+        
+          </div>
+          <% } %>
+      </div>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+
+  <% if (isLoggedIn == 'yes') { %>
+
+    <!-- App Bottom Menu -->
+    <div class="section full">
+      <div class="appBottomMenu bg-success text-light">
+          <a href="/#top" class="item">
+              <div class="col">
+                  <ion-icon name="home-outline"></ion-icon>
+                  <strong>Home</strong>
+              </div>
+          </a>
+          <a href="/#orders" class="item">
+              <div class="col text-light">
+                  <ion-icon name="list-outline"></ion-icon>
+                  <strong>My Orders</strong>
+              </div>
+          </a>
+          <a href="#" class="item active" data-toggle="modal" data-target="#basketSidebar">
+              <div class="col">
+                <div class="action-button large bg-success"  style="border: solid; border-width: 3px; border-color: white;">
+                    <ion-icon name="basket-outline" id="basketIcon"></ion-icon>
+                    </div><span class="badge bg-danger" id="basketCounter">0</span>
+                </div>
+          </a>
+          <a href="#" class="item" id="notifBottomBtn">
+              <div class="col text-light">
+                  <ion-icon name="notifications-outline"></ion-icon>
+                  <strong>Notifications</strong>
+              </div>
+          </a>
+          <a href="/#settings" class="item">
+              <div class="col text-light">
+                  <ion-icon name="settings-outline"></ion-icon>
+                  <strong>Settings</strong>
+              </div>
+          </a>
+      </div>
+    </div>
+    <!-- * App Bottom Menu -->
+
+    <!-- My Basket Sidebar -->
+    <div class="modal fade panelbox panelbox-right" id="basketSidebar" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content" style="max-width: 280px;">
+          <div class="modal-body p-0" style="max-width: 280px;">
+
+            <div class="section full m-2">
+              <a href="#" class="item">
+                <button class="btn btn-success btn-block rounded shadowed" id="checkoutBtn" style="display: none" data-dismiss="modal">Checkout</button>
+              </a>
+            </div>
+
+            <!-- My Basket -->
+            <div class="section full mt-1" id="mybasketsection" style="display: none">
+              <% if (userdata.firstOrder == 'yes') { %>
+               <div class="m-2">It is your first order. You will get 5% discount and free delivery. Thank you.</div>
+              <% } %>
+              <div class="section-title medium">My Basket: ₱<span id="total"></span></div>
+              <h6 class="ml-2">Note: Click the item to remove it from your basket. Delivery fee is ₱10.</h6>
+              <div class="wide-block pt-2 pb-2">
+                <div class="listview image-listview" id="mybasket"></div>
+              </div>
+            </div>
+            <!-- * My Basket -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- * My Basket Sidebar -->
+
+    <!-- Confirm Order -->
+    <div class="modal fade dialogbox" id="confirmorder" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h6>Please confirm if this is correct. Press back if you need to adjust your orders.</h6>
+              </div>
+              <small class="modal-body text-left mt-1" id="confirmitems"></small>
+              <div class="modal-footer">
+                  <div class="btn-inline">
+                    <a href="#" class="btn btn-text-danger" data-toggle="modal" data-target="#basketSidebar" data-dismiss="modal">Back</a>
+                    <a href="#" class="btn btn-text-success" data-toggle="modal" data-target="#paythrough" data-dismiss="modal" id="proceedBtn">Proceed</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Confirm Order -->
+
+    <!-- Pay Through -->
+    <div class="modal fade dialogbox" id="paythrough" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">You're about to checkout.</h5>
+              </div>
+              <div class="modal-body">
+                  How do you want to pay the <span id="checkOutPayThroughTotal"></span>
+              </div>
+              <div class="modal-footer">
+                  <div class="btn-list">
+                      <a href="#" class="btn btn-text-success btn-block" data-dismiss="modal" id="cod">COD</a>
+                      <a href="#" class="btn btn-text-primary btn-block" data-toggle="modal" data-target="#throughgcash" data-dismiss="modal" id="gcash">GCASH</a>
+                      <a href="#" class="btn btn-text-info btn-block" data-toggle="modal" data-target="#throughpaymaya" data-dismiss="modal" id="paymaya">PAYMAYA</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Pay Through -->
+
+    <!-- Gcash -->
+    <div class="modal fade dialogbox" id="throughgcash" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="pt-1 text-center">
+                  <img src="/assets/img/mygcashqr.jpg" alt="image" class="imaged mb-1" style="width: 95%;">
+              </div>
+              <div class="modal-header">
+                  <h5 class="modal-title">Screenshot this and use it to pay through GCASH</h5>
+              </div>
+              <small class="modal-body" id="checkoutTotalGCash">
+                  Please pay exact amount.
+              </small>
+              <div class="modal-footer">
+                  <div class="btn-inline">
+                    <a href="#" class="btn btn-text-danger" data-toggle="modal" data-target="#paythrough" data-dismiss="modal">Back</a>
+                    <a href="#" class="btn btn-text-secondary" data-dismiss="modal" id="gcashDoneBtn">Done</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Gcash -->
+
+    <!-- Paymaya -->
+    <div class="modal fade dialogbox" id="throughpaymaya" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="pt-1 text-center">
+                  <img src="/assets/img/mypaymayaqr.jpg" alt="image" class="imaged mb-1" style="width: 95%;">
+              </div>
+              <div class="modal-header">
+                  <h5 class="modal-title">Screenshot this and use it to pay through Paymaya</h5>
+              </div>
+              <small class="modal-body" id="checkoutTotalPaymaya">
+                  Please pay exact amount.
+              </small>
+              <div class="modal-footer">
+                  <div class="btn-inline">
+                      <a href="#" class="btn btn-text-danger" data-toggle="modal" data-target="#paythrough" data-dismiss="modal">Back</a>
+                      <a href="#" class="btn btn-text-secondary" data-dismiss="modal" id="paymayaDoneBtn">Done</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Paymaya -->
+
+    <!-- Order Sent -->
+    <div class="modal fade dialogbox" id="ordersent" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-icon text-success">
+                  <ion-icon name="checkmark-circle"></ion-icon>
+              </div>
+              <div class="modal-header">
+                  <h5 class="modal-title">Order sent!</h5>
+              </div>
+              <div class="modal-body">
+                  You will be notified by our delivery personnel once they are at your designated pick-up point.
+              </div>
+              <div class="modal-footer">
+                  <div class="btn-inline" onclick="window.location.reload();">
+                      <a href="/" data-dismiss="modal" class="btn">Done</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Order Sent -->
+
+    <!-- Delete Account Confirmation -->
+    <div class="modal fade dialogbox" id="deleteAccountConfirmation" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-icon text-danger">
+                  <ion-icon name="sad-outline"></ion-icon>
+              </div>
+              <div class="modal-header">
+                  <h5 class="modal-title">Are you sure?</h5>
+              </div>
+              <div class="modal-body">
+                  It's sad to see you go.
+              </div>
+              <div class="modal-footer">
+                  <div class="btn-inline">
+                      <span class="btn" data-dismiss="modal">Cancel</span>
+                      <span class="btn text-danger" data-dismiss="modal" id="deleteAccountBtn">Confirm</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Delete Account Confirmation -->
+
+    <!-- Pasabuy -->
+    <div class="modal fade dialogbox" id="pasabuy" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-icon text-success">
+                  <ion-icon name="bicycle-outline"></ion-icon>
+              </div>
+              <div class="modal-header">
+                  <h5 class="modal-title">PasaBuy</h5>
+              </div>
+              <div class="modal-body">
+                  <span id="pbLoc"></span>
+                  <br>
+                  <span id="pbETD"></span>
+                  <br>
+                  <span id="pbETA"></span>
+              </div>
+              <div class="modal-footer">
+                <div class="btn-inline">
+                  <a href="#" class="btn btn-text-danger" data-dismiss="modal">Back</a>
+                  <a href="#" class="btn btn-text-success" data-toggle="modal" data-target="#pasabuyItems" data-dismiss="modal">Continue</a>
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Pasabuy -->
+
+    <!-- Pasabuy Items -->
+    <div class="modal fade dialogbox" id="pasabuyItems" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-body pt-2">
+                <div class="text-left">
+                  <h5>Type below your instructions:</h5>
+                </div>
+                <div class="form-group basic">
+                  <div class="input-wrapper">
+                    <textarea class="form-control" id="pasabuyIns" rows="8"></textarea>
+                  </div>
+                </div>
+                <div class="mt-2" style="line-height: 80%; text-align: justify; text-justify: inter-word;">
+                  <small class="text-dark">Delivery Fee: ₱<span id="pBFee"></span><br><br>Note: Please be clear of your instructions of what you want us to buy for you. Indicate the specific item, the quantity and which store to buy from. If you need to send pictures please contact us by clicking the <ion-icon name="chatbubbles-outline" style="font-size: 18px;"></ion-icon> icon above.</small>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <div class="btn-inline">
+                  <a href="#" class="btn btn-text-danger" data-dismiss="modal">Cancel</a>
+                  <a href="#" class="btn btn-text-success" data-dismiss="modal" id="pasabuySendBtn">Send</a>
+                </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Pasabuy Items -->
+
+    <!-- Pasabuy Order Sent -->
+    <div class="modal fade dialogbox" id="pasabuyOrderSent" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-icon text-success">
+                  <ion-icon name="bicycle-outline"></ion-icon>
+              </div>
+              <div class="modal-header">
+                  <h5 class="modal-title">Pasabuy Order sent!</h5>
+              </div>
+              <div class="modal-body">
+                  Our personnel is now reviewing your Pasabuy order. You will be contacted on your mobile phone if your order was accepted. Thank you! 
+              </div>
+              <div class="modal-footer">
+                  <div class="btn-inline" onclick="window.location.reload();">
+                      <a href="/" data-dismiss="modal" class="btn">Done</a>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <!-- * Pasabuy Order Sent -->
+
+  <% } %>
+
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-messaging-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    var messaging = firebase.messaging();
+    var toastTextTopSuccess = document.getElementById('toastTextTopSuccess');
+    var toastTextTopWarning = document.getElementById('toastTextTopWarning');
+    var toastTextTopInfo = document.getElementById('toastTextTopInfo');
+    const toastProcessingText = document.getElementById('toastProcessingText');
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+    const whatsnew = document.getElementById('whatsnew');
+    var isLoggedIn = document.getElementById('isLoggedIn').value == 'yes' ? true : false;
+    if(isLoggedIn) {
+      var userdata = JSON.parse(document.getElementById('userdata').value);
+      var uid = userdata.uid;
+      var isFirstOrder = userdata.firstOrder == 'yes' ? true : false;
+    }
+
+    var categories = [];
+    var checkOutTotal = 0;
+    var total = 0;
+    var itemsOnBasket = [];
+    var itemsOnBasket_ = [];
+    var tid = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 8);
+    var d = new Date();
+    var dd = new Date();
+    var ddd = new Date(dd.getFullYear(), dd.getMonth(), dd.getDate(), 20, 00, 00);
+    var eightpmToday = ddd.getTime();
+    var sixamTomorrow = eightpmToday + (10*60*60*1000);
+    var isCutOff = ((d.getTime() > eightpmToday) && (d.getTime() < sixamTomorrow)) ? true : false;
+    var pbFee;
+    // var isCutOff = false;
+    
+    window.addEventListener('DOMContentLoaded', () => {
+
+      if(isLoggedIn) {
+        // Notification
+        if(userdata.notificationToken == null) {
+          document.getElementById('notifSwitch').checked = false;
+        } else if(userdata.notificationToken == 'off'){
+          document.getElementById('notifSwitch').checked = false;
+        } else {
+          document.getElementById('notifSwitch').checked = true;
+        }
+      }
+
+      db.ref('Categories').once('value').then(snapshot => {
+        document.getElementById('items').innerText = '';
+        Object.values(snapshot.val()).forEach(catData => {
+          categories.push(catData.id);
+          insertCategory(catData);
+        });
+
+        db.ref('Items').once('value').then(snapshot => {
+          categories.forEach(cat => {
+            document.getElementById(`box-${cat}`).innerText = '';
+          });
+          Object.values(snapshot.val()).forEach(itemData => {
+            insertItems(itemData);
+          });
+
+        });
+
+      });
+    });
+
+    // LISTENERS
+    db.ref('Buttons').on('value', snapshot => {
+      if(snapshot.val() != null) {
+        document.getElementById('buttons').innerText = '';
+        Object.values(snapshot.val()).forEach(btnData => {
+          insertButton(btnData);
+        });
+      }
+    }, err => {
+      console.log(err);
+    });
+
+    db.ref('Offer').on('value', snapshot => {
+      if(snapshot.val() != null) {
+        if(!isLoggedIn) {
+          toastTextTopWarning.innerText = snapshot.val();
+          toastbox('toastTopWarning', 10000);
+        }
+      }
+    }, err => {
+      console.log(err);
+    });
+
+    db.ref('Announcement').on('value', snapshot => {
+      if(snapshot.val() != null) {
+        document.getElementById('announcement').innerText = snapshot.val();
+      }
+    }, err => {
+      console.log(err);
+    });
+
+    if(isLoggedIn) {
+
+      db.ref('Records').orderByChild('date').on('value', snapshot => {
+        var myrecords = Object.values(snapshot.val()).filter(record => record.sn == userdata.mobile).reverse();
+        document.getElementById('trbody').innerText = '';
+        total = 0;
+        myrecords.forEach(rec => {
+          insertRecord(rec);
+          if(rec.paid == 'no') {
+            total += parseInt(rec.total);
+          }
+        });
+        document.getElementById('total').innerText = `₱ ${numberWithCommas(total)}`;
+      }, err => {
+        console.log(err);
+      });
+
+      db.ref('Pasabuy/orders').on('value', snapshot => {
+        if(snapshot.val() != null) {
+          let myPBOrders = Object.values(snapshot.val()).filter(ord => ord.mobile == userdata.mobile);
+          document.getElementById('trbodyPB').innerText = '';
+          myPBOrders.forEach(recData => {
+            insertPBRecord(recData);
+          });
+        }
+      }, err => {
+        console.log(err);
+      });
+
+      db.ref('Pasabuy').on('value', snapshot => {
+        if(snapshot.val() != null) {
+          pbFee = parseInt(snapshot.val().fee);
+          if(snapshot.val().active == 'yes') {
+            document.getElementById('pasabuyBtn').setAttribute('class', 'btn btn-sm btn-outline-success rounded shadowed');
+            document.getElementById('pasabuyBtn').setAttribute('onclick', "openPasabuy()");
+            // Pasabuy Details
+            document.getElementById('pbLoc').innerText = `Going To: ${snapshot.val().location}`;
+            document.getElementById('pbETD').innerHTML = `Departure: ${unixToDatePB(snapshot.val().etd)}`;
+            document.getElementById('pbETA').innerHTML = `Arrival: ${unixToDatePB(snapshot.val().eta)}`;
+            document.getElementById('pBFee').innerText = snapshot.val().fee;
+          } else {
+            document.getElementById('pasabuyBtn').setAttribute('class', 'btn btn-sm btn-outline-danger rounded shadowed');
+            document.getElementById('pasabuyBtn').setAttribute('onclick', "notifyPasabuyNotAvailable()");
+          }
+        }
+      }, err => {
+        console.log(err);
+      });
+
+      document.getElementById('checkoutBtn').addEventListener('click', () => {
+        if(isFirstOrder) {
+          // Craft confirmitems
+          let itemForConfirmation = simplifyItemsX(itemsOnBasket_);
+          document.getElementById('confirmitems').innerHTML = `${itemForConfirmation.join('<br>')}`;
+          document.getElementById('checkOutPayThroughTotal').innerHTML = `<del class="text-danger">₱${numberWithCommas(checkOutTotal+10)}</del> <span class="text-success">₱${numberWithCommas(Math.round(checkOutTotal-(checkOutTotal*.05)))}</span>? It is your first order, you get 5% discount and free delivery.`;
+          document.getElementById('checkoutTotalGCash').innerHTML = `Please pay exact amount of <span class="text-success">₱${numberWithCommas(Math.round(checkOutTotal-(checkOutTotal*.05)))}</span>. Then press Done to send your order.`;
+          document.getElementById('checkoutTotalPaymaya').innerHTML = `Please pay exact amount of <span class="text-success">₱${numberWithCommas(Math.round(checkOutTotal-(checkOutTotal*.05)))}</span>. Then press Done to send your order.`;
+          $('#confirmorder').modal('show');
+        } else {
+          // Craft confirmitems
+          let itemForConfirmation = simplifyItemsX(itemsOnBasket_);
+          document.getElementById('confirmitems').innerHTML = `${itemForConfirmation.join('<br>')}`;
+          document.getElementById('checkOutPayThroughTotal').innerHTML = `<span class="text-success">₱${numberWithCommas(checkOutTotal+10)}</span>?`;
+          document.getElementById('checkoutTotalGCash').innerHTML = `Please pay exact amount of <span class="text-success">₱${numberWithCommas(checkOutTotal+10)}</span>. Then press Done to send your order.`;
+          document.getElementById('checkoutTotalPaymaya').innerHTML = `Please pay exact amount of <span class="text-success">₱${numberWithCommas(checkOutTotal+10)}</span>. Then press Done to send your order.`;
+          $('#confirmorder').modal('show');
+        }
+      });
+
+      document.getElementById('notifSwitch').addEventListener('change', async () => {
+          if(document.getElementById('notifSwitch').checked) {
+            if (firebase.messaging.isSupported()) {
+                requestPermission();
+            }
+          } else {
+            await axios.post('/deleteToken', {
+              uid: userdata.uid,
+              mobile: userdata.mobile,
+              mytopic: userdata.mytopic,
+              notificationToken: userdata.notificationToken
+            }).then(response => {
+              toastTextTopSuccess.innerText = 'Notifications disabled.';
+              toastbox('toastTopSuccess', 2000);
+            }, err => {
+              console.log
+            });
+          }
+        });
+
+      document.getElementById('saveCoords').addEventListener('click', () => {
+        toastbox('toastProcessing');
+        db.ref(`Users/${uid}/lat`).set(document.getElementById('myLat').value);
+        db.ref(`Users/${uid}/long`).set(document.getElementById('myLong').value);
+        db.ref(`Users/${uid}/latLong`).set(`${document.getElementById('myLat').value}, ${document.getElementById('myLong').value}`);
+        setTimeout(()=>{
+          document.getElementById('coordinates').style.display = 'none';
+          document.getElementById('saveCoords').style.display = 'none';
+          document.getElementById('googleMap').style.display = 'none';
+          toastTextTopSuccess.innerText = 'Your new pick-up point has been saved to database.';
+          toastbox('toastTopSuccess', 2000);
+          window.location.reload();
+        }, 2000);
+      });
+      
+      document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+        toastProcessingText.innerText = 'Deleting your data...';
+        toastbox('toastProcessing');
+        await axios.post('/deleteAccount', {
+          uid: uid
+        }).then(response => {
+          setTimeout(()=>{
+            window.location = '/logout';
+          }, 1000);
+        }).catch(err => {
+          console.log(err);
+        });
+      });
+
+      document.getElementById('cod').addEventListener('click', async () => {
+        let d = new Date();
+        var itemsToRecord = simplifyItems(itemsOnBasket);
+        toastbox('toastProcessing');
+        let finalTotal;
+        let message;
+        let fo;
+        if(isFirstOrder) {
+          finalTotal = Math.round(checkOutTotal-(checkOutTotal*.05));
+          message = "Online order with 5% discount and free delivery.";
+          fo = 'yes';
+        } else {
+          finalTotal = checkOutTotal+10;
+          message = "Online order";
+          fo = 'no';
+        }
+        await sendOrder({
+          sn: userdata.mobile,
+          date: parseInt(d.getTime()),
+          total: finalTotal,
+          corpo: 'no',
+          items: itemsToRecord,
+          message: message,
+          paid: 'no',
+          payment: 'cod',
+          tid: tid,
+          delivered: 'no',
+          lat: userdata.lat,
+          long: userdata.long,
+          name: `${userdata.fname.toUpperCase()} ${userdata.lname.toUpperCase()}`,
+          uid: userdata.uid,
+          firstOrder: fo,
+          orders: userdata.orders,
+          mobile: userdata.mobile,
+          mytopic: userdata.mytopic
+        }).then((result) => {
+          setTimeout(()=>{
+            toastTextTopSuccess.innerText = 'Order sent!';
+            toastbox('toastTopSuccess', 2000);
+            $('#ordersent').modal('show');
+          }, 2000);
+        });
+      });
+
+      document.getElementById('gcashDoneBtn').addEventListener('click', async () => {
+        let d = new Date();
+        var itemsToRecord = simplifyItems(itemsOnBasket);
+        toastbox('toastProcessing');
+        let finalTotal;
+        let message;
+        let fo;
+        if(isFirstOrder) {
+          finalTotal = Math.round(checkOutTotal-(checkOutTotal*.05));
+          message = "Online order with 5% discount and free delivery.";
+          fo = 'yes';
+        } else {
+          finalTotal = checkOutTotal+10;
+          message = "Online order";
+          fo = 'no';
+        }
+        await sendOrder({
+          sn: userdata.mobile,
+          date: parseInt(d.getTime()),
+          total: finalTotal,
+          corpo: 'no',
+          items: itemsToRecord,
+          message: message,
+          paid: 'no',
+          payment: 'gcash',
+          tid: tid,
+          delivered: 'no',
+          lat: userdata.lat,
+          long: userdata.long,
+          name: `${userdata.fname.toUpperCase()} ${userdata.lname.toUpperCase()}`,
+          uid: userdata.uid,
+          firstOrder: fo,
+          orders: userdata.orders,
+          mobile: userdata.mobile,
+          mytopic: userdata.mytopic
+        }).then(() => {
+          setTimeout(()=>{
+            toastTextTopSuccess.innerText = 'Order sent!';
+            toastbox('toastTopSuccess', 2000);
+            $('#ordersent').modal('show');
+          }, 2000);
+        });
+      });
+
+      document.getElementById('paymayaDoneBtn').addEventListener('click', async () => {
+        let d = new Date();
+        var itemsToRecord = simplifyItems(itemsOnBasket);
+        toastbox('toastProcessing');
+        let finalTotal;
+        let message;
+        let fo;
+        if(isFirstOrder) {
+          finalTotal = Math.round(checkOutTotal-(checkOutTotal*.05));
+          message = "Online order with 5% discount and free delivery.";
+          fo = 'yes';
+        } else {
+          finalTotal = checkOutTotal+10;
+          message = "Online order";
+          fo = 'no';
+        }
+        await sendOrder({
+          sn: userdata.mobile,
+          date: parseInt(d.getTime()),
+          total: finalTotal,
+          corpo: 'no',
+          items: itemsToRecord,
+          message: message,
+          paid: 'no',
+          payment: 'paymaya',
+          tid: tid,
+          delivered: 'no',
+          lat: userdata.lat,
+          long: userdata.long,
+          name: `${userdata.fname.toUpperCase()} ${userdata.lname.toUpperCase()}`,
+          uid: userdata.uid,
+          firstOrder: fo,
+          orders: userdata.orders,
+          mobile: userdata.mobile,
+          mytopic: userdata.mytopic
+        }).then(() => {
+          setTimeout(()=>{
+            toastTextTopSuccess.innerText = 'Order sent!';
+            toastbox('toastTopSuccess', 2000);
+            $('#ordersent').modal('show');
+          }, 2000);
+        });
+      });
+
+      document.getElementById('pasabuySendBtn').addEventListener('click', async () => {
+        if(document.getElementById('pasabuyIns').value == '') {
+          toastTextTopWarning.innerText = "Please type on the textbox your instructions."
+          toastbox('toastTopWarning', 3000);
+        } else {
+          toastbox('toastProcessing');
+          let d = new Date();
+          let orderData = {
+            instructions: document.getElementById('pasabuyIns').value,
+            mobile: userdata.mobile,
+            name: `${userdata.fname.toUpperCase()} ${userdata.lname.toUpperCase()}`,
+            orders: userdata.orders,
+            date: parseInt(d.getTime()),
+            lat: userdata.lat,
+            long: userdata.long,
+            uid: userdata.uid,
+            mytopic: userdata.mytopic,
+            fee: pbFee
+          }
+          await sendPBOrder(orderData).then(result => {
+            toastTextTopSuccess.innerText = "Pasabuy order sent!";
+            toastbox('toastTopSuccess');
+            $('#pasabuyOrderSent').modal('show');
+          });
+        }
+      });
+
+      document.getElementById('notifBottomBtn').addEventListener('click', () => {
+        if(userdata.notificationToken == null || userdata.notificationToken == undefined) {
+          if(firebase.messaging.isSupported()) {
+            requestPermission();
+          }
+        } else {
+          document.getElementById('notifications').scrollIntoView();
+        }
+      });
+
+    }
+    
+    // FUNCTIONS
+    async function sendOrder(orderData) {
+      await axios.post('/neworder', orderData).then(response => {
+        return true;
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+
+    async function sendPBOrder(orderData) {
+      await axios.post('/newpborder', orderData).then(response => {
+        return true;
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+
+    function insertCategory(catData) {
+      var item = document.createElement('div');
+      item.setAttribute('class', 'item');
+      var ah = document.createElement('div');
+      ah.setAttribute('class', 'accordion-header');
+      var ab = document.createElement('div');
+      ab.setAttribute('class', 'accordion-body collapse');
+      ab.setAttribute('id', `id-${catData.id}`);
+      ab.setAttribute('data-parent', '#items');
+      var ahbtn = document.createElement('button');
+      ahbtn.setAttribute('class', 'btn collapsed');
+      ahbtn.setAttribute('type', 'button');
+      ahbtn.setAttribute('data-toggle', 'collapse');
+      ahbtn.setAttribute('data-target', `#id-${catData.id}`);
+      ahbtn.innerText = `${catData.title}`;
+      var ac = document.createElement('div');
+      ac.setAttribute('class', 'accordion-content');
+
+      var ul = document.createElement('ul');
+      ul.setAttribute('class', 'listview image-listview');
+      ul.setAttribute('id', `box-${catData.id}`);
+
+      // APPEND
+      ac.appendChild(ul);
+      ab.appendChild(ac);
+      ah.appendChild(ahbtn);
+      item.appendChild(ah);
+      item.appendChild(ab);
+      document.getElementById('items').appendChild(item);
+    }
+    
+    function insertItems(itemData) {
+      var li = document.createElement('li');
+      var itemDiv = document.createElement('div');
+      var itemImg = document.createElement('img');
+      var inDiv = document.createElement('div');
+      var itemNameDiv = document.createElement('div');
+      var priceDiv = document.createElement('span');
+      
+      itemDiv.setAttribute('class', 'item');
+      itemImg.setAttribute('class', 'imaged w48 square');
+      itemImg.setAttribute('src', dropboxURL(itemData.image));
+      inDiv.setAttribute('class', 'in');
+      priceDiv.setAttribute('class', 'text-muted m-2');
+      priceDiv.innerText = `₱${itemData.price}`;
+      
+      if(itemData.available == 'no') {
+        itemImg.setAttribute('style', 'opacity: 0.5');
+        itemNameDiv.innerHTML = `<span><del>${itemData.name}</del></span>`;
+        if(isLoggedIn) {
+          if(isCutOff) {
+            li.setAttribute('onclick', `notifyCutOff()`);
+          } else {
+            li.setAttribute('onclick', `notifyNotAvailable('${itemData.name}')`);
+          }
+        } else {
+          if(isCutOff) {
+            li.setAttribute('onclick', `notifyCutOff()`);
+          } else {
+            li.setAttribute('onclick', `notifyToLogin('Item not available.')`);
+          }
+        }
+      } else {
+        itemNameDiv.innerHTML = `<span>${itemData.name}</span>`;
+        if(isLoggedIn) {
+          if(isCutOff) {
+            li.setAttribute('onclick', `notifyCutOff()`);
+          } else {
+            li.setAttribute('onclick', `insertToBasket('${JSON.stringify(itemData)}')`);
+          }
+        } else {
+          if(isCutOff) {
+            li.setAttribute('onclick', `notifyCutOff()`);
+          } else {
+            li.setAttribute('onclick', `notifyToLogin('Please login or register to add to your basket.')`);
+          }
+        }
+      }
+
+      // APPEND
+      inDiv.appendChild(itemNameDiv);
+      inDiv.appendChild(priceDiv);
+      itemDiv.appendChild(itemImg);
+      itemDiv.appendChild(inDiv);
+      li.appendChild(itemDiv);
+      document.getElementById(`box-${itemData.category}`).appendChild(li);
+    }
+
+    function insertToBasket(itemDataString) {
+        var itemData = JSON.parse(itemDataString);
+        var li = document.createElement('li');
+        li.setAttribute('id', `basket-${itemData.id}`);
+        li.setAttribute('onclick', `removeFromBasket('${itemData.id}', '${itemData.name}', ${parseInt(itemData.price)})`);
+        var itemDiv = document.createElement('div');
+        itemDiv.setAttribute('class', 'item');
+        var itemImg = document.createElement('img');
+        itemImg.setAttribute('class', 'imaged w48 square');
+        itemImg.setAttribute('src', dropboxURL(itemData.image));
+        var inDiv = document.createElement('div');
+        inDiv.setAttribute('class', 'in');
+        var itemNameDiv = document.createElement('div');
+        itemNameDiv.innerText = itemData.name;
+        var priceDiv = document.createElement('span');
+        priceDiv.setAttribute('class', 'badge badge-success');
+        priceDiv.innerText = itemData.price;
+        
+        // Update Total
+        checkOutTotal += parseInt(itemData.price);
+        document.getElementById('total').innerText = checkOutTotal;
+        document.getElementById('mybasketsection').style.display = 'block';
+        document.getElementById('checkoutBtn').style.display = 'block';
+        
+        // Update Items on Basket
+        itemsOnBasket.push(itemData.id);
+        itemsOnBasket_.push(itemData.name);
+  
+        // APPEND
+        inDiv.appendChild(itemNameDiv);
+        inDiv.appendChild(priceDiv);
+        itemDiv.appendChild(itemImg);
+        itemDiv.appendChild(inDiv);
+        li.appendChild(itemDiv);
+        document.getElementById(`mybasket`).appendChild(li);
+
+        // Blink the basket counter
+        document.getElementById('basketCounter').style.opacity = 0;
+        setTimeout(function(){ document.getElementById('basketCounter').style.opacity = 1; }, 200);
+
+        // Update basket badge
+        document.getElementById('basketCounter').innerText = itemsOnBasket.length;
+    }
+
+    function removeFromBasket(id, name, price) {
+      // Update Total
+      checkOutTotal -= price;
+      document.getElementById('total').innerText = checkOutTotal;
+      document.getElementById('mybasket').removeChild(document.getElementById(`basket-${id}`));
+      // Blink the basket counter
+      document.getElementById('basketCounter').style.opacity = 0;
+      setTimeout(function(){ document.getElementById('basketCounter').style.opacity = 1; }, 200);
+      // Update items on basket
+      itemsOnBasket.splice(itemsOnBasket.indexOf(id), 1);
+      itemsOnBasket_.splice(itemsOnBasket_.indexOf(name), 1);
+      if(checkOutTotal <= 0) {
+        document.getElementById('mybasketsection').style.display = 'none';
+        document.getElementById('checkoutBtn').style.display = 'none';
+        document.getElementById('basketCounter').innerText = 0;
+      } else {
+        document.getElementById('mybasketsection').style.display = 'block';
+        document.getElementById('checkoutBtn').style.display = 'block';
+        document.getElementById('basketCounter').innerText = itemsOnBasket.length;
+      }
+    }
+
+    function simplifyItems(arr) {
+      var finalArr = [];
+      arr.forEach(item => {
+        finalArr.push(`${item} | ${arr.filter(element => element === item).length}`);
+      });
+      return [...new Set(finalArr)];
+    }
+
+    function simplifyItemsX(arr) {
+      var finalArr = [];
+      arr.forEach(item => {
+        finalArr.push(`${item} X ${arr.filter(element => element === item).length}`);
+      });
+      return [...new Set(finalArr)];
+    }
+
+    function insertButton(btnData) {
+      let btn = document.createElement('button');
+      btn.setAttribute('class', `btn btn-large btn-${btnData.type} rounded shadowed mt-2`);
+      btn.setAttribute('onclick', `window.location = '${btnData.link}'`);
+      btn.innerHTML = btnData.title;
+      let br = document.createElement('br');
+      document.getElementById('buttons').appendChild(btn);
+      document.getElementById('buttons').appendChild(br);
+    }
+
+    function openPasabuy() {
+      $('#pasabuy').modal('show');
+    }
+
+    // NOTICES
+
+    function notifyNotAvailable(itemName) {
+      toastErrorText.innerText = `Sorry but ${itemName} is not available now.`;
+      toastbox('toastError');
+    }
+
+    function notifyToLogin(message) {
+      toastTextTopWarning.innerText = message;
+      toastbox('toastTopWarning', 2000);
+    }
+
+    function notifyCutOff() {
+      toastErrorText.innerText = `Sorry but cut-off time for online orders is at 2000h. Please order tomorrow at around 0600h. Thank you.`;
+      toastbox('toastError');
+    }
+
+    function notifyPasabuyNotAvailable() {
+      toastErrorText.innerText = "Sorry but PasaBuy is not available at the moment. Please enable your notifications and we will notify you when PasaBuy is available.";
+      toastbox('toastError');
+    }
+
+    function requestPermission() {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.');
+          document.getElementById('notifSwitch').checked = true;
+          toastProcessingText.innerText = "Please wait. We are generating your notification token.";
+          toastbox('toastProcessing');
+          messaging.getToken({ vapidKey: 'BDbhSP9U0LaD4Sn_WSk-omhHAkLOHdGW8VCFGzv5yyZ8ao81vuLFXP6dpGsZtJQ62VR-WJNfLLxM_iMlqaiPmEs' }).then(async (currentToken) => {
+            if (currentToken) {
+                await axios.post('/changenotiftoken', {
+                    uid: userdata.uid,
+                    mytopic: userdata.mytopic,
+                    mobile: userdata.mobile,
+                    notificationToken: currentToken
+                }).then(()=>{
+                    toastSuccessText.innerText = 'New notification token set.';
+                    toastbox('toastSuccess');
+                    setTokenSentToServer(true);
+                    document.getElementById('notifications').scrollIntoView();
+                },(err)=>{
+                    console.log(err);
+                    toastErrorText.innerText = err;
+                    toastbox('toastError');
+                })
+            } else {
+              toastTextTopWarning.innerText = 'No registration token available. Request permission to generate one.';
+              toastbox('toastTopWarning', 3000);
+              setTokenSentToServer(false);
+              window.location.reload();
+            }
+          }).catch((err) => {
+            toastTextTopWarning.innerText = 'An error occurred while retrieving token. ' + err;
+            toastbox('toastTopWarning', 3000);
+            setTokenSentToServer(false);
+          });
+        } else {
+          toastTextTopWarning.innerText = 'Unable to get permission to notify.';
+          toastbox('toastTopWarning', 3000);
+        }
+      });
+    }
+    
+    function setTokenSentToServer(sent) {
+      window.localStorage.setItem('sentToServer',
+        sent ? '1': '0');
+    }
+
+    function myMap() {
+      if(isLoggedIn) {
+        var mapProp= {
+            center: new google.maps.LatLng(11.391976, 122.442568),
+            zoom: 15,
+            mapTypeId: 'satellite'
+        };
+        var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+        google.maps.event.addListener(map, 'click', function(event) {
+          document.getElementById('myLat').value = event.latLng.lat();
+          document.getElementById('myLong').value = event.latLng.lng();
+          document.getElementById('coordinates').innerText = event.latLng.lat() + ", " + event.latLng.lng();
+          document.getElementById('saveCoords').style.display = 'inline-block';
+        });
+      }
+    }
+
+    // MY ORDERS
+
+    function insertRecord(recData) {
+      var tr = document.createElement('tr');
+      var tdDate = document.createElement('td');
+      tdDate.setAttribute('scope', 'row');
+      tdDate.setAttribute('class', 'text-center');
+      tdDate.innerHTML = unixToDate(parseInt(recData.date));
+      var tdItems = document.createElement('td');
+      tdItems.setAttribute('style', 'font-size: 10px');
+      var finalItems = [];
+      recData.items.forEach(i => {
+        finalItems.push(i.replace('|', 'x'));
+      });
+      if(recData.corpo == 'yes') {
+        tdItems.innerText = recData.message;
+      } else {
+        tdItems.innerText = finalItems.join(', ');
+      }
+      var tdSubTotal = document.createElement('td');
+      var tdStatus = document.createElement('td');
+      tdStatus.setAttribute('class', 'text-center');
+      tdSubTotal.setAttribute('class', 'text-right');
+      tdSubTotal.innerText = `₱${recData.total}`;
+      
+      if(recData.paid == 'no' && recData.delivered == 'no') {
+        tdStatus.innerHTML = "<span class='text-danger'>Unpaid, Undelivered</span>";
+      } else if(recData.paid == 'yes' && recData.delivered == 'no') {
+        tdStatus.innerHTML = "<span class='text-success'>Paid</span>, <span class='text-danger'>Undelivered</span>";
+      } else if(recData.paid == 'no' && recData.delivered == 'yes') {
+        tdStatus.innerHTML = "<span class='text-danger'>Unpaid</span>, <span class='text-success'>Undelivered</span>";
+      } else {
+        tdStatus.innerHTML = "<span class='text-success'>Paid, Delivered</span>";
+      }
+
+      // APPEND
+      tr.appendChild(tdDate);
+      tr.appendChild(tdItems);
+      tr.appendChild(tdSubTotal);
+      tr.appendChild(tdStatus);
+      document.getElementById('trbody').appendChild(tr);
+    }
+
+    function insertPBRecord(recData) {
+      var tr = document.createElement('tr');
+      var tdDate = document.createElement('td');
+      tdDate.setAttribute('scope', 'row');
+      tdDate.setAttribute('class', 'text-center');
+      tdDate.innerHTML = unixToDate(parseInt(recData.date));
+      var tdItems = document.createElement('td');
+      tdItems.setAttribute('style', 'font-size: 10px');
+      tdItems.innerText = recData.instructions;
+    
+      var tdStatus = document.createElement('td');
+      tdStatus.setAttribute('class', 'text-center');
+      
+      if(recData.paid == 'no' && recData.delivered == 'no') {
+        tdStatus.innerHTML = "<span class='text-danger'>Unpaid, Undelivered</span>";
+      } else if(recData.paid == 'yes' && recData.delivered == 'no') {
+        tdStatus.innerHTML = "<span class='text-success'>Paid</span>, <span class='text-danger'>Undelivered</span>";
+      } else if(recData.paid == 'no' && recData.delivered == 'yes') {
+        tdStatus.innerHTML = "<span class='text-danger'>Unpaid</span>, <span class='text-success'>Undelivered</span>";
+      } else {
+        tdStatus.innerHTML = "<span class='text-success'>Paid, Delivered</span>";
+      }
+
+      // APPEND
+      tr.appendChild(tdDate);
+      tr.appendChild(tdItems);
+      tr.appendChild(tdStatus);
+      document.getElementById('trbodyPB').appendChild(tr);
+    }
+
+    function unixToDate(unixDate) {
+      var d = new Date(unixDate);
+      return `${d.getDate()}-${getMonthName(d.getMonth())}<br>${(d.getHours() <= 9) ? `0${d.getHours()}` : d.getHours()}:${d.getMinutes() <= 9 ? `0${d.getMinutes()}` : d.getMinutes()}`;
+    }
+
+    function unixToDatePB(unixDate) {
+      var d = new Date(unixDate);
+      return `${d.getDate()}-${getMonthName(d.getMonth())} ${(d.getHours() <= 9) ? `0${d.getHours()}` : d.getHours()}:${d.getMinutes() <= 9 ? `0${d.getMinutes()}` : d.getMinutes()}`;
+    }
+
+    function showHideMap() {
+      document.getElementById('googleMap').style.display = document.getElementById('googleMap').style.display == 'none' ? 'block' : 'none';
+      document.getElementById('mapNote').style.display = document.getElementById('mapNote').style.display == 'none' ? 'block' : 'none';
+    }
+
+    function dropboxURL(link) {
+      var base = link.split('?')[0];
+      var fileId = base.split('/')[4];
+      var fileName = base.split('/')[5]; 
+      return `https://dl.dropboxusercontent.com/s/${fileId}/${fileName}`;
+    }
+    
+    function getMonthName(monthNum) {
+      switch (monthNum) {
+        case 0: return 'Jan'; break;
+        case 1: return 'Feb'; break;
+        case 2: return 'Mar'; break;
+        case 3: return 'Apr'; break;
+        case 4: return 'May'; break;
+        case 5: return 'Jun'; break;
+        case 6: return 'Jul'; break;
+        case 7: return 'Aug'; break;
+        case 8: return 'Sep'; break;
+        case 9: return 'Oct'; break;
+        case 10: return 'Nov'; break;
+        case 11: return 'Dec'; break;
+      }
+    }
+    
+    function getDayName(dayNum) {
+      switch (dayNum) {
+        case 1: return 'Mon'; break;
+        case 2: return 'Tue'; break;
+        case 3: return 'Wed'; break;
+        case 4: return 'Thu'; break;
+        case 5: return 'Fri'; break;
+        case 6: return 'Sat'; break;
+        case 0: return 'Sun'; break;
+      }
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+      }
+      return array;
+    }
+    
+  </script>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=&callback=myMap"></script>
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

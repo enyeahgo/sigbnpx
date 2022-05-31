@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>Balance Sheet Admin</title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body style="display: none;">
+
+  <input type="hidden" value="<%= pin%>" id="pin" />
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-warning text-light">
+    <div class="left">
+      <a href="#" class="headerButton goBack">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      Balance Sheet
+    </div>
+    <div class="right">
+      <a href="/admin" class="headerButton">Close</a>
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+      <div id="toastSuccessTop" class="toast-box toast-top bg-success tap-to-close">
+        <div class="in">
+          <div class="text" id="toastSuccessTextTop"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+      </div>
+
+      <div id="toastProcessing" class="toast-box toast-center">
+        <div class="in">
+          <div class="text" id="toastProcessingText">
+            <div class="spinner-border text-light" role="status"></div>
+            <br><br>
+            Please wait...
+          </div>
+        </div>
+      </div>
+
+      <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+        <div class="in">
+          <div class="text" id="toastSuccessText"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+      </div>
+
+      <div id="toastError" class="toast-box toast-center bg-danger">
+        <div class="in">
+          <div class="text" id="toastErrorText"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+      </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="section inset mt-2">
+      <div class="card">
+        <div class="card-header bg-success text-light">Total PX Equity Value</div>
+        <div class="card-body text-center">
+          <h1 id="overall"></h1>
+          Number of Shareholders: <span class="text-dark" id="shareholdersCount"></span>
+          <br>
+          Total Capital: <span class="text-dark" id="totalShareAmount"></span>
+          <br>
+          Total Profit: <span class="text-dark" id="totalProfit"></span>
+          <br>
+          Profit Per Shareholder: <span class="text-dark" id="perShareholder"></span>
+          <br>
+          <a href="#" data-toggle="modal" data-target="#shareholders">
+            <button class="btn btn-sm btn-outline-primary rounded shadowed mt-1">View Shareholders</button>
+          </a>
+          <button class="btn btn-sm btn-outline-primary rounded shadowed mt-1" onclick="addShareholder()" style="display: none;">Add Shareholder</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section inset mt-2">
+      <div class="card">
+        <div class="card-header bg-danger text-light">
+          <div class="row">
+            <div class="col-6">Debts</div>
+            <div class="col-6 text-right">
+              <ion-icon name="add-circle-outline" style="font-size:20px" id="debtsAdd"></ion-icon>
+              <ion-icon name="contrast-outline" style="font-size:20px" id="unsettledAdd"></ion-icon>
+            </div>
+          </div>
+        </div>
+        <div class="card-body text-center">
+          <h3 id="debtsTotal"></h3>
+          <a href="#" data-toggle="modal" data-target="#debtors">
+            <button class="btn btn-sm btn-outline-primary rounded shadowed">View Debts</button>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section inset mt-2">
+      <div class="card">
+        <div class="card-header bg-info text-light">
+          <div class="row">
+            <div class="col-6">Cash On-Hand</div>
+            <div class="col-6 text-right" style="display: block;">
+              <ion-icon name="download-outline" style="font-size:20px" id="deposit"></ion-icon>&nbsp;&nbsp;
+              <ion-icon name="share-outline" style="font-size:20px" id="withdraw"></ion-icon>&nbsp;&nbsp;
+              <ion-icon name="remove-circle-outline" style="font-size:20px" id="cashMinus"></ion-icon>&nbsp;&nbsp;
+              <ion-icon name="add-circle-outline" style="font-size:20px" id="cashAdd"></ion-icon>
+            </div>
+          </div>
+        </div>
+        <div class="card-body text-center">
+          <h3 id="cashTotal"></h3>
+          <a href="#" data-toggle="modal" data-target="#cashonhandrecords">
+            <button class="btn btn-sm btn-outline-primary rounded shadowed">View Records</button>
+          </a>
+          <div class="text-left mt-2">
+            <small class="text-muted">In the vault: ₱<span id="inTheVault"></span></small>
+            <br>
+            <small class="text-muted">In the PX: ₱<span id="inThePX"></span></small>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section inset mt-2">
+      <div class="card">
+        <div class="card-header bg-secondary text-light">PX Receivables</div>
+        <div class="card-body text-center">
+          <h3 id="pxreceivable"></h3>
+          <button onclick="window.location = '/records/12345'" class="btn btn-sm btn-outline-primary rounded shadowed">View Receivables</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section inset mt-2">
+      <div class="card">
+        <div class="card-header bg-primary text-light">Remaining PX Items (Estimate Only)</div>
+        <div class="card-body text-center">
+          <h3 id="remainingpxitems"></h3>
+          <br>
+          <div class="text-left">
+            <small class="text-muted"><u>How is this calculated?</u></small>
+            <br>
+            <small class="text-muted">Expected profit is at 10%. Total Amount of PX Marketing plus 10% minus the items sold (PX Receivables and items sold online).</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+  
+  <!-- Shareholders Sidebar -->
+  
+  <div class="modal fade panelbox panelbox-left" id="shareholders" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="max-width: 280px;">
+        <div class="modal-body p-1" style="max-width: 280px;">
+
+          <!-- Toastboxes -->
+          <div id="toastSuccess__" class="toast-box toast-center bg-success tap-to-close">
+            <div class="in">
+              <div class="text">Shareholder successfully deleted!</div>
+            </div>
+            <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+          </div>
+          <!-- * Toastboxes -->
+
+          <h4>Shareholders</h4>
+          <ul class="listview simple-listview" id="shareholdersList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- * Shareholders Sidebar -->
+
+  <!-- Debtors Sidebar -->
+  
+  <div class="modal fade panelbox panelbox-right" id="debtors" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="max-width: 280px;">
+        <div class="modal-body p-1" style="max-width: 280px;">
+
+          <!-- Toastboxes -->
+          <div id="toastSuccess_" class="toast-box toast-center bg-success tap-to-close">
+            <div class="in">
+              <div class="text">Changes successfully sent to database.</div>
+            </div>
+            <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+          </div>
+          <!-- * Toastboxes -->
+
+          <h4>Debts</h4>
+          <ul class="listview simple-listview" id="debtorsList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- * Debtors Sidebar -->
+  
+  <!-- Cash On-Hand Sidebar -->
+  
+  <div class="modal fade panelbox panelbox-right" id="cashonhandrecords" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="max-width: 280px;">
+        <div class="modal-body p-1" style="max-width: 280px;">
+
+          <!-- Toastboxes -->
+          <div id="toastSuccess___" class="toast-box toast-center bg-success tap-to-close">
+            <div class="in">
+              <div class="text">Changes successfully sent to database.</div>
+            </div>
+            <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+          </div>
+          <!-- * Toastboxes -->
+
+          <h4>Cash On-Hand Records</h4>
+          <ul class="listview simple-listview" id="cashList"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- * Cash On-Hand Sidebar -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+    var debtorsList = document.getElementById('debtorsList');
+    var shareholdersList = document.getElementById('shareholdersList');
+    var cashList = document.getElementById('cashList');
+    var pin = parseInt(document.getElementById('pin').value);
+
+    var debtsTotal;
+    var cashTotal;
+    var pxreceivable;
+    var overall;
+    var shareholdersCount;
+    var totalShareAmount;
+    var totalProfit;
+    var perShareholder;
+    var remainingpxitems;
+    var onlineDelivered;
+
+    window.addEventListener('load', () => {
+      getAdmins().then(admins => {
+        checkCredentials(admins, pin);
+      });
+    });
+
+    // LISTENERS
+    db.ref('Debts').on('value', snapshot => {
+      debtsTotal = 0;
+      debtorsList.innerText = '';
+      Object.values(snapshot.val()).forEach(dData => {
+        if(dData.paid == 'no') {
+          if(dData.type == 'debt') {
+            debtsTotal += parseInt(dData.amount);
+          }
+          insertDebtor(dData);
+        }
+      });
+      document.getElementById('debtsTotal').innerText = `₱${numberWithCommas(debtsTotal)}`;
+      overall = debtsTotal+cashTotal+pxreceivable+remainingpxitems;
+      totalProfit = overall - totalShareAmount;
+      perShareholder = Math.round(totalProfit / shareholdersCount);
+      document.getElementById('totalProfit').innerText = `₱${numberWithCommas(totalProfit)}`;
+      document.getElementById('perShareholder').innerText = `₱${numberWithCommas(perShareholder)}`;
+      document.getElementById('overall').innerText = `₱${numberWithCommas(overall)}`;
+    }, err => {
+      console.log(err);
+    });
+    
+    db.ref('Cash').on('value', snapshot => {
+      cashTotal = 0;
+      if(snapshot.val() != null) {
+        cashList.innerText = '';
+        Object.values(snapshot.val()).reverse().forEach(cData => {
+          insertCashRecord(cData);
+          cashTotal += parseInt(cData.amount);
+        });
+      }
+      document.getElementById('cashTotal').innerText = `₱${numberWithCommas(cashTotal)}`;
+      overall = debtsTotal+cashTotal+pxreceivable+remainingpxitems;
+      totalProfit = overall - totalShareAmount;
+      perShareholder = Math.round(totalProfit / shareholdersCount);
+      document.getElementById('totalProfit').innerText = `₱${numberWithCommas(totalProfit)}`;
+      document.getElementById('perShareholder').innerText = `₱${numberWithCommas(perShareholder)}`;
+      document.getElementById('overall').innerText = `₱${numberWithCommas(overall)}`;
+    }, err => {
+      console.log(err);
+    });
+    
+    db.ref('Records').on('value', snapshot => {
+      pxreceivable = 0;
+      Object.values(snapshot.val()).forEach(rec => {
+        if(rec.sn != 'Corpo' && rec.paid == 'no') {
+          pxreceivable += parseInt(rec.total);
+        }
+      });
+      let onlineDeliveredRecords = Object.values(snapshot.val()).filter(rec => rec.delivered == 'yes');
+      console.log(onlineDeliveredRecords);
+      onlineDelivered = 0;
+      onlineDeliveredRecords.forEach(rec => {
+        onlineDelivered += parseInt(rec.total);
+      });
+      document.getElementById('pxreceivable').innerText = `₱${numberWithCommas(pxreceivable)}`;
+      overall = debtsTotal+cashTotal+pxreceivable+remainingpxitems;
+      totalProfit = overall - totalShareAmount;
+      perShareholder = Math.round(totalProfit / shareholdersCount);
+      document.getElementById('totalProfit').innerText = `₱${numberWithCommas(totalProfit)}`;
+      document.getElementById('perShareholder').innerText = `₱${numberWithCommas(perShareholder)}`;
+      document.getElementById('overall').innerText = `₱${numberWithCommas(overall)}`;
+    }, err => {
+      console.log(err);
+    });
+
+    db.ref('RemainingPXEstimate').on('value', snapshot => {
+      if(snapshot.val() != null) {
+        remainingpxitems = parseInt(snapshot.val());
+        document.getElementById('remainingpxitems').innerText = `₱${numberWithCommas(remainingpxitems)}`;
+        overall = debtsTotal+cashTotal+pxreceivable+remainingpxitems;
+        totalProfit = overall - totalShareAmount;
+        perShareholder = Math.round(totalProfit / shareholdersCount);
+        document.getElementById('totalProfit').innerText = `₱${numberWithCommas(totalProfit)}`;
+        document.getElementById('perShareholder').innerText = `₱${numberWithCommas(perShareholder)}`;
+        document.getElementById('overall').innerText = `₱${numberWithCommas(overall)}`;
+      }
+    }, err => {
+      console.log(err);
+    });
+
+    db.ref('Shareholders').on('value', snapshot => {
+      totalShareAmount = 0;
+      shareholdersCount = 0;
+      shareholdersList.innerText = '';
+      if(snapshot.val() != null) {
+        Object.values(snapshot.val()).forEach(share => {
+          insertShareholder(share);
+          shareholdersCount += share.share;
+          totalShareAmount += share.amount;
+        });
+        document.getElementById('shareholdersCount').innerText = shareholdersCount;
+        document.getElementById('totalShareAmount').innerText = `₱${numberWithCommas(totalShareAmount)}`;
+        overall = debtsTotal+cashTotal+pxreceivable+remainingpxitems;
+        totalProfit = overall - totalShareAmount;
+        perShareholder = Math.round(totalProfit / shareholdersCount);
+        document.getElementById('totalProfit').innerText = `₱${numberWithCommas(totalProfit)}`;
+        document.getElementById('perShareholder').innerText = `₱${numberWithCommas(perShareholder)}`;
+      }
+    }, err => {
+      console.log(err);
+    });
+
+    db.ref('Bank').on('value', snapshot => {
+      if(snapshot.val() != null) {
+        document.getElementById('inTheVault').innerText = numberWithCommas(parseInt(snapshot.val().vault));
+        document.getElementById('inThePX').innerText = numberWithCommas(parseInt(snapshot.val().px));
+      }
+    }, err => {
+      console.log(err);
+    });
+
+    // ELEMENT LISTENERS
+
+    document.getElementById('debtsAdd').addEventListener('click', () => {
+      let name = prompt('Rank and Lastname: ');
+      if(name != null) {
+        let amt = prompt('Amount: ');
+        if(amt != null) {
+          let ans = confirm(`Is this correct? Name: ${name.toUpperCase()}, Amount: ₱${numberWithCommas(amt)}`);
+          if(ans) {
+            let newKey = db.ref('Debts').push().getKey();
+            var d = new Date();
+            db.ref(`Debts/${newKey}`).set({
+              amount: parseInt(amt),
+              date: d.getTime(),
+              id: newKey,
+              name: name.toUpperCase(),
+              paid: "no",
+              type: 'debt'
+            });
+          }
+        }
+      }
+    });
+
+    document.getElementById('unsettledAdd').addEventListener('click', () => {
+      let name = prompt('You are adding an unsettled PX Accountability. Please input Rank and Lastname: ');
+      if(name != null) {
+        let amt = prompt('Unsettled Amount: ');
+        if(amt != null) {
+          let ans = confirm(`Is this correct? Name: ${name.toUpperCase()}, Amount: ₱${numberWithCommas(amt)}`);
+          if(ans) {
+            let newKey = db.ref('Debts').push().getKey();
+            var d = new Date();
+            db.ref(`Debts/${newKey}`).set({
+              amount: parseInt(amt),
+              date: d.getTime(),
+              id: newKey,
+              name: name.toUpperCase(),
+              paid: "no",
+              type: 'unsettled'
+            });
+          }
+        }
+      }
+    });
+
+    document.getElementById('deposit').addEventListener('click', () => {
+      let amount = prompt('How much you want to DEPOSIT to vault? ');
+      if(amount != null) {
+        let source = prompt('Fund source: ');
+        if(source != null) {
+          let newKey = db.ref('Cash').push().getKey();
+          let d = new Date();
+          db.ref(`Cash/${newKey}`).set({
+            amount: parseInt(amount),
+            source: `${source} (Deposited to Vault)`,
+            date: d.getTime()
+          });
+          // Update Bank PX Cash On-hand
+          db.ref('Bank/vault').once('value').then(snapshot => {
+            let newValue = parseInt(snapshot.val())+parseInt(amount);
+            db.ref('Bank/vault').set(newValue);
+          });
+        }
+      }
+    });
+    
+    document.getElementById('withdraw').addEventListener('click', () => {
+      let amount = prompt('How much you want to WITHDRAW from vault? ');
+      if(amount != null) {
+        let source = prompt('Purpose: ');
+        if(source != null) {
+          let newKey = db.ref('Cash').push().getKey();
+          let d = new Date();
+          db.ref(`Cash/${newKey}`).set({
+            amount: (parseInt(amount) * -1),
+            source: `${source} (Withdrawn from Vault)`,
+            date: d.getTime()
+          });
+          // Update Bank PX Cash On-hand
+          db.ref('Bank/vault').once('value').then(snapshot => {
+            let newValue = parseInt(snapshot.val())-parseInt(amount);
+            db.ref('Bank/vault').set(newValue);
+          });
+        }
+      }
+    });
+
+    document.getElementById('cashAdd').addEventListener('click', () => {
+      let amount = prompt('How much you want to ADD to PX Cash On-hand? ');
+      if(amount != null) {
+        let source = prompt('Fund source: ');
+        if(source != null) {
+          let newKey = db.ref('Cash').push().getKey();
+          let d = new Date();
+          db.ref(`Cash/${newKey}`).set({
+            amount: parseInt(amount),
+            source: `${source} (Added to PX Cash On-hand)`,
+            date: d.getTime()
+          });
+          // Update Bank PX Cash On-hand
+          db.ref('Bank/px').once('value').then(snapshot => {
+            let newValue = parseInt(snapshot.val())+parseInt(amount);
+            db.ref('Bank/px').set(newValue);
+          });
+        }
+      }
+    });
+    
+    document.getElementById('cashMinus').addEventListener('click', () => {
+      let amount = prompt('How much you want to WITHDRAW from PX Cash On-hand? ');
+      if(amount != null) {
+        let source = prompt('Purpose: ');
+        if(source != null) {
+          let newKey = db.ref('Cash').push().getKey();
+          let d = new Date();
+          db.ref(`Cash/${newKey}`).set({
+            amount: (parseInt(amount) * -1),
+            source: `${source} (Withdrawn from PX Cash On-hand)`,
+            date: d.getTime()
+          });
+          // Update Bank PX Cash On-hand
+          db.ref('Bank/px').once('value').then(snapshot => {
+            let newValue = parseInt(snapshot.val())-parseInt(amount);
+            db.ref('Bank/px').set(newValue);
+          });
+        }
+      }
+    });
+
+    function insertShareholder(sData) {
+      var li = document.createElement('li');
+      li.innerHTML = `
+        <div>
+          ${sData.name}<br><span class="text-muted">₱${numberWithCommas(sData.amount)}</span>
+        </div>
+        <div class="item">
+          <div class="in">
+            <button class="btn btn-sm btn-danger" onclick="deleteShareholder('${sData.id}');">Delete</button>
+          </div>
+        </div>
+      `;
+      shareholdersList.appendChild(li);
+    }
+
+    function insertDebtor(dData) {
+      var li = document.createElement('li');
+      if(dData.type == 'unsettled') {
+        li.innerHTML = `
+          <div>
+            ${dData.name}<br><small>(Unsettled PX Accountability)</small><br><span class="text-muted">₱${numberWithCommas(dData.amount)}</span>
+          </div>
+          <div class="item">
+            <div class="in">
+              <button class="btn btn-sm btn-warning" onclick="clearDebt('${dData.id}', '${dData.name}', ${dData.amount});">Clear</button>
+              </div>
+          </div>
+        `;
+      } else {
+        li.innerHTML = `
+          <div>
+            ${dData.name}<br><span class="text-muted">₱${numberWithCommas(dData.amount)}</span>
+          </div>
+          <div class="item">
+            <div class="in">
+              <button class="btn btn-sm btn-success" onclick="paidDebt('${dData.id}', '${dData.name}', ${dData.amount});">Paid</button>
+              </div>
+          </div>
+        `;
+      }
+      debtorsList.appendChild(li);
+    }
+    
+    function insertCashRecord(cData) {
+      let d = new Date(cData.date);
+      let theDate = `${getDateTime(cData.date)}`;
+      var li = document.createElement('li');
+      if(cData.amount > 0) {
+        li.innerHTML = `
+          <div>
+            <small>${cData.source}</small><br><span class="text-muted">₱${numberWithCommas(cData.amount)}</span><br><small>${theDate}</small>
+          </div>
+        `;
+      } else {
+        li.innerHTML = `
+          <div class="text-danger">
+            <small>${cData.source}</small><br><span class="text-muted">-₱${numberWithCommas(cData.amount*-1)}</span><br><small>${theDate}</small>
+          </div>
+        `;
+      }
+      cashList.appendChild(li);
+    }
+
+    function deleteShareholder(id) {
+      let ans = confirm('Are you sure you want to delete this shareholder?');
+      if(ans) {
+        db.ref(`Shareholders/${id}`).set(null);
+        toastbox('toastSuccess__');
+      }
+    }
+
+    function paidDebt(id, name, amount) {
+      var ans = confirm(`Are you sure ${name} already paid?`);
+      if(ans) {
+        db.ref(`Debts/${id}/paid`).set('yes');
+        let newKey = db.ref('Cash').push().getKey();
+        let d = new Date();
+        db.ref(`Cash/${newKey}`).set({
+          amount: parseInt(amount),
+          source: `Payment from ${name} amount of ${amount} (Added to PX Cash On-hand)`,
+          date: d.getTime()
+        });
+        // Update Bank PX Cash On-hand
+        db.ref('Bank/px').once('value').then(snapshot => {
+          let newValue = parseInt(snapshot.val())+parseInt(amount);
+          db.ref('Bank/px').set(newValue);
+          toastbox('toastSuccess_');
+        });
+      }
+    }
+
+    function clearDebt(id, name, amount) {
+      var ans = confirm(`You are going to clear ${name}. This will not be added to cash on-hand.`);
+      if(ans) {
+        db.ref(`Debts/${id}/paid`).set('yes');
+        let newKey = db.ref('Cash').push().getKey();
+        let d = new Date();
+        toastbox('toastSuccess_');
+      }
+    }
+
+    function checkCredentials(admins, pin) {
+      var mySn = window.prompt('Enter your Serial Number: ');
+      if(admins.includes(parseInt(mySn))) {
+        var myPin = window.prompt('Enter PX Pin: ');
+        if(parseInt(myPin) == pin) {
+          document.body.style.display = 'block';
+        } else {
+          var ansP = confirm('Wrong PIN!');
+          ansP ? window.location = '/' : window.location = '/';
+        }
+      } else {
+        var ansP = confirm('You are not allowed to view this page!');
+        ansP ? window.location = '/' : window.location = '/';
+      }
+    }
+
+    function addShareholder() {
+      let name = prompt('Rank and Lastname: ');
+      if(name != null) {
+        let amount = prompt('Amount: ');
+        if(amount != null) {
+          let newKey = db.ref('Shareholders').push().getKey();
+          db.ref(`Shareholders/${newKey}`).set({
+            amount: parseInt(amount),
+            dividendReceived: 0,
+            id: newKey,
+            name: name.toUpperCase(),
+            share: parseInt(amount)/1000
+          });
+          let newKey_ = db.ref('Cash').push().getKey();
+          let d = new Date();
+          db.ref(`Cash/${newKey_}`).set({
+            amount: parseInt(amount),
+            source: `Additional Shareholder of ${name} amount of ${amount} (Added to PX Cash On-hand)`,
+            date: d.getTime()
+          });
+          // Update Bank PX Cash On-hand
+          db.ref('Bank/px').once('value').then(snapshot => {
+            let newValue = parseInt(snapshot.val())+parseInt(amount);
+            db.ref('Bank/px').set(newValue);
+            toastSuccessText.innerText = 'New shareholder added! Thank you.';
+            toastbox('toastSuccess');
+          });
+        }
+      }
+    }
+
+    async function getAdmins() {
+      let admins;
+      await db.ref('Admins').once('value').then(snapshot => {
+        admins = Object.values(snapshot.val());
+      });
+      return Promise.resolve(admins);
+    }
+    
+    function getMonthName(monthNum) {
+      switch (monthNum) {
+        case 0: return 'Jan'; break;
+        case 1: return 'Feb'; break;
+        case 2: return 'Mar'; break;
+        case 3: return 'Apr'; break;
+        case 4: return 'May'; break;
+        case 5: return 'Jun'; break;
+        case 6: return 'Jul'; break;
+        case 7: return 'Aug'; break;
+        case 8: return 'Sep'; break;
+        case 9: return 'Oct'; break;
+        case 10: return 'Nov'; break;
+        case 11: return 'Dec'; break;
+      }
+    }
+    
+    function getDayName(dayNum) {
+      switch (dayNum) {
+        case 1: return 'Mon'; break;
+        case 2: return 'Tue'; break;
+        case 3: return 'Wed'; break;
+        case 4: return 'Thu'; break;
+        case 5: return 'Fri'; break;
+        case 6: return 'Sat'; break;
+        case 0: return 'Sun'; break;
+      }
+    }
+    
+    function getDateTime(unix) {
+      let d = new Date(unix);
+      let date = d.getDate() <= 9 ? `0${d.getDate()}` : d.getDate();
+      let hr = d.getHours() <= 9 ? `0${d.getHours()}` : d.getHours();
+      let min = d.getMinutes() <= 9 ? `0${d.getMinutes()}` : d.getMinutes();
+      return `${date}-${getMonthName(d.getMonth())}-${d.getFullYear()} &nbsp;&nbsp;${hr}:${min}`;
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+  </script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

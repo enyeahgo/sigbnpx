@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>6Cav PX Accountabilities</title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+  <input type="hidden" value="<%= JSON.stringify(persdata)%>" id="persdata" />
+  <input type="hidden" value="<%= pin%>" id="pin" />
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+      <a href="/admin" class="headerButton">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      Accountabilities
+    </div>
+    <div class="right">
+      <a href="/admin" class="headerButton">Close</a>
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+    <div id="toastSuccessTop" class="toast-box toast-top bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessTextTop"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastProcessing" class="toast-box toast-center">
+      <div class="in">
+        <div class="text" id="toastProcessingText">
+          <div class="spinner-border text-light" role="status"></div>
+          <br><br>
+          Please wait...
+        </div>
+      </div>
+    </div>
+
+    <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastError" class="toast-box toast-center bg-danger">
+      <div class="in">
+        <div class="text" id="toastErrorText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="section full">
+      <div class="section-title medium">6Cav Personnel <span id="totalAcc"></span></div>
+      <div class="ml-2">As of <span id="dateNow"></span></div>
+      <ul class="listview image-listview" id="accountList"></ul>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+
+    var persdata = JSON.parse(document.getElementById('persdata').value);
+    var sns;
+    var overAllTotal = 0;
+    
+    window.addEventListener('DOMContentLoaded', () => {
+      var d = new Date();
+      document.getElementById('dateNow').innerText = `${d.getDate()} ${getMonthName(d.getMonth())} ${d.getFullYear()}, ${getDayName(d.getDay())}`;
+      sns = getSerialNumbers(persdata).reverse();
+      getAdmins().then(admins => {
+        // checkCredentials(admins, parseInt(document.getElementById('pin').value));
+        getAllTotal(sns).then(allTotal => {
+          sns.forEach(sn => {
+            overAllTotal += parseInt(allTotal[`${sn}`]);
+            var per = getPersDetails(sn);
+            insertPers(per, allTotal);
+          });
+          document.getElementById('totalAcc').innerText = `(₱${numberWithCommas(overAllTotal)})`;
+        });
+      });
+    });
+
+    function getPersDetails(sn) {
+      return persdata[sn];
+    }
+
+    function insertPers(perData, allTotal) {
+      var li = document.createElement('li');
+      var itemDiv = document.createElement('div');
+      itemDiv.setAttribute('class', 'item');
+      var inDiv = document.createElement('div');
+      var itemNameDiv = document.createElement('div');
+      itemNameDiv.innerHTML = `<a href='/perrecord_/${perData.sn}'>${perData.rank} ${perData.lname}</a>`;
+      inDiv.setAttribute('class', 'in');
+      var total = document.createElement('h5');
+      total.innerText = `₱${numberWithCommas(allTotal[`${perData.sn}`])}`;
+      
+      // APPEND
+      inDiv.appendChild(itemNameDiv);
+      inDiv.appendChild(total);
+      itemDiv.appendChild(inDiv);
+      li.appendChild(itemDiv);
+      document.getElementById('accountList').appendChild(li);
+    }
+
+    async function getAllTotal(serials) {
+      var totalObj = {};
+      await db.ref('Records').once('value').then(snapshot => {
+        let recs = Object.values(snapshot.val());
+        serials.forEach(s => {
+          let myRecs = recs.filter(r => parseInt(r.sn) == parseInt(s));
+          let myTotal = 0;
+          myRecs.forEach(mr => {
+            if(mr.paid == 'no') {
+              myTotal += parseInt(mr.total);
+            }
+          });
+          totalObj[`${s}`] = myTotal;
+        });
+      });
+      return Promise.resolve(totalObj);
+    }
+
+    function checkCredentials(admins, pin) {
+      document.body.style.display = 'none';
+      var mySn = window.prompt('Enter your Serial Number: ');
+      if(admins.includes(parseInt(mySn))) {
+        var myPin = window.prompt('Enter PX Pin: ');
+        if(parseInt(myPin) == pin) {
+          document.body.style.display = 'block';
+        } else {
+          var ansP = confirm('Wrong PIN!');
+          ansP ? window.location = '/' : window.location = '/';
+        }
+      } else {
+        var ansP = confirm('You are not allowed to view this page!');
+        ansP ? window.location = '/' : window.location = '/';
+      }
+    }
+
+    async function getAdmins() {
+      let admins;
+      await db.ref('Admins').once('value').then(snapshot => {
+        admins = Object.values(snapshot.val());
+      });
+      return Promise.resolve(admins);
+    }
+
+    function getSerialNumbers(obj) {
+      var pers = Object.values(obj);
+      var sns = [];
+      pers.forEach(per => {
+        sns.push(per.sn);
+      });
+      return sns;
+    }
+    
+    function getMonthName(monthNum) {
+      switch (monthNum) {
+        case 0: return 'Jan'; break;
+        case 1: return 'Feb'; break;
+        case 2: return 'Mar'; break;
+        case 3: return 'Apr'; break;
+        case 4: return 'May'; break;
+        case 5: return 'Jun'; break;
+        case 6: return 'Jul'; break;
+        case 7: return 'Aug'; break;
+        case 8: return 'Sep'; break;
+        case 9: return 'Oct'; break;
+        case 10: return 'Nov'; break;
+        case 11: return 'Dec'; break;
+      }
+    }
+    
+    function getDayName(dayNum) {
+      switch (dayNum) {
+        case 1: return 'Mon'; break;
+        case 2: return 'Tue'; break;
+        case 3: return 'Wed'; break;
+        case 4: return 'Thu'; break;
+        case 5: return 'Fri'; break;
+        case 6: return 'Sat'; break;
+        case 0: return 'Sun'; break;
+      }
+    }
+    
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+  </script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

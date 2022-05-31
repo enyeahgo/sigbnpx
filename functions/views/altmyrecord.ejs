@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>My Record - <%= user%></title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+  <input type="hidden" value="<%= user%>" id="user" />
+  <input type="hidden" value="<%= JSON.stringify(records)%>" id="records" />
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+      <a href="/store/<%= user%>" class="headerButton">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      My Record - <%= user%>
+    </div>
+    <div class="right">
+      <a href="https://sixcavcoy.web.app/home" class="headerButton">Close</a>
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+    <div id="toastSuccessTop" class="toast-box toast-top bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessTextTop"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastProcessing" class="toast-box toast-center">
+      <div class="in">
+        <div class="text" id="toastProcessingText">
+          <div class="spinner-border text-light" role="status"></div>
+          <br><br>
+          Please wait...
+        </div>
+      </div>
+    </div>
+
+    <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastError" class="toast-box toast-center bg-danger">
+      <div class="in">
+        <div class="text" id="toastErrorText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="section inset">
+      <div class="section-title medium">Hello <%= user%>,</div>
+      <h5>Below is your updated record as of today.</h5>
+      <div class="wide-block pt-2 pb-2 text-center">
+        <h3 id="dateNow"></h3>
+        <h5>Total PX Accountability</h5>
+        <h2 id="total"></h2>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="section full">
+      <div class="section-title medium">Your Records</div>
+      <div class="card">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col" width="25%" class="text-center">Date</th>
+                        <th scope="col">Items</th>
+                        <th scope="col" class="text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="trbody"></tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+
+    const sn = parseInt(document.getElementById('user').value);
+    var total = 0;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      alert("Thank you! Your purchase has been successfully recorded.");
+
+      var myrecords = Object.values(JSON.parse(document.getElementById('records').value));
+      document.getElementById('trbody').innerText = '';
+      total = 0;
+      myrecords.forEach(rec => {
+        if(rec.paid == 'no') {
+          insertRecord(rec);
+          total += parseInt(rec.total);
+        }
+      });
+      document.getElementById('total').innerText = `₱ ${numberWithCommas(total)}`;
+
+      var d = new Date();
+      document.getElementById('dateNow').innerText = `${d.getDate()} ${getMonthName(d.getMonth())} ${d.getFullYear()}, ${getDayName(d.getDay())}`;
+      // Remove transactions
+      db.ref('Transactions').once('value').then(snapshot => {
+        if(snapshot.val() != null) {
+          var mytrans = Object.values(snapshot.val()).filter(t => t.sn == sn && t.status == 'success');
+          if(mytrans.length == 1) {
+            db.ref(`Transactions/${mytrans[0].tid}`).set(null);
+          } else {
+            mytrans.forEach(mt => {
+              db.ref(`Transactions/${mt.tid}`).set(null);
+            });
+          }
+        }
+      });
+    });
+
+    // FUNCTIONS
+
+    function insertRecord(recData) {
+      var tr = document.createElement('tr');
+      var tdDate = document.createElement('td');
+      var tdItems = document.createElement('td');
+      var tdSubTotal = document.createElement('td');
+      tdDate.setAttribute('scope', 'row');
+      tdItems.setAttribute('style', 'font-size: 10px');
+      if(recData.paid == 'yes') {
+        tdDate.setAttribute('class', 'text-center text-success');
+        tdItems.setAttribute('class', 'text-success');
+        tdSubTotal.setAttribute('class', 'text-right text-success');
+      } else {
+        tdDate.setAttribute('class', 'text-center');
+        tdSubTotal.setAttribute('class', 'text-right');
+      }
+        
+      tdDate.innerHTML = unixToDate(parseInt(recData.date));
+      var finalItems = [];
+      recData.items.forEach(i => {
+        finalItems.push(i.replace('|', 'x'));
+      });
+      if(recData.corpo == 'yes') {
+        tdItems.innerText = recData.message;
+      } else {
+        tdItems.innerText = finalItems.join(', ');
+      }
+      tdSubTotal.innerText = `₱${recData.total}`;
+      // APPEND
+      tr.appendChild(tdDate);
+      tr.appendChild(tdItems);
+      tr.appendChild(tdSubTotal);
+      document.getElementById('trbody').appendChild(tr);
+    }
+
+    function unixToDate(unixDate) {
+      var d = new Date(unixDate);
+      return `${d.getDate()}-${getMonthName(d.getMonth())}<br>${(d.getHours() <= 9) ? `0${d.getHours()}` : d.getHours()}:${d.getMinutes() <= 9 ? `0${d.getMinutes()}` : d.getMinutes()}`;
+    }
+    
+    function getMonthName(monthNum) {
+      switch (monthNum) {
+        case 0: return 'Jan'; break;
+        case 1: return 'Feb'; break;
+        case 2: return 'Mar'; break;
+        case 3: return 'Apr'; break;
+        case 4: return 'May'; break;
+        case 5: return 'Jun'; break;
+        case 6: return 'Jul'; break;
+        case 7: return 'Aug'; break;
+        case 8: return 'Sep'; break;
+        case 9: return 'Oct'; break;
+        case 10: return 'Nov'; break;
+        case 11: return 'Dec'; break;
+      }
+    }
+    
+    function getDayName(dayNum) {
+      switch (dayNum) {
+        case 1: return 'Monday'; break;
+        case 2: return 'Tuesday'; break;
+        case 3: return 'Wednesday'; break;
+        case 4: return 'Thursday'; break;
+        case 5: return 'Friday'; break;
+        case 6: return 'Saturday'; break;
+        case 0: return 'Sunday'; break;
+      }
+    }
+    
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+  </script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

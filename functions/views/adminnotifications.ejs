@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>6Cav PX Notifications</title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body style="display: none;">
+
+  <input type="hidden" value="<%= pin%>" id="pin" />
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+      <a href="#" class="headerButton goBack">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      Notifications Settings
+    </div>
+    <div class="right">
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+      <div id="toastWarningTop" class="toast-box toast-top bg-warning">
+        <div class="in">
+          <div class="text" id="toastWarningTextTop"></div>
+        </div>
+      </div>
+
+      <div id="toastSuccessTop" class="toast-box toast-top bg-success">
+        <div class="in">
+          <div class="text" id="toastSuccessTextTop"></div>
+        </div>
+      </div>
+
+      <div id="toastProcessing" class="toast-box toast-center">
+        <div class="in">
+          <div class="text">
+            <div class="spinner-border text-light" role="status"></div>
+            <br><br>
+            <span id="toastProcessingText">Please wait...</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+        <div class="in">
+          <div class="text" id="toastSuccessText"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button" onclick="resetForm()">OKAY</button>
+      </div>
+
+      <div id="toastError" class="toast-box toast-center bg-danger">
+        <div class="in">
+          <div class="text" id="toastErrorText"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+      </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="section inset mt-2">
+      <div class="section-title medium">Notifications</div>
+      <div class="wide-block pt-2 pb-2">
+       <div class="container">
+         <div class="row">
+           <div class="col-8 text-left">
+             Enable Notifications:
+           </div>
+           <div class="col-4 text-right">
+             <div class="custom-control custom-switch">
+               <input type="checkbox" class="custom-control-input" id="notifSwitch"/>
+               <label class="custom-control-label" for="notifSwitch"></label>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+    </div>
+
+    <div class="section full mt-2">
+      <div class="section-title medium">Pending Online Orders</div>
+      <div class="ml-2 text-muted"><h6>Copy the instructions and send it to duty delivery boy together with a screenshot of the google maps delivery location.</h6></div>
+      <div class="wide-block p-0">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Date</th>
+                        <th scope="col" class="text-center">TID</th>
+                        <th scope="col" class="text-center">Mobile</th>
+                        <th scope="col" class="text-center">Location</th>
+                        <th scope="col">Items</th>
+                        <th scope="col" class="text-right">Amount</th>
+                        <th scope="col" class="text-center">Payment</th>
+                        <th scope="col" class="text-center">Actions</th>
+                        <th scope="col" class="text-center">Instructions</th>
+                    </tr>
+                </thead>
+                <tbody id="trbody"></tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section full mt-2">
+      <div class="section-title medium">Pending PasaBuy Orders</div>
+      <div class="ml-2 text-muted"><h6>Kindly text the client if their PasaBuy order has been accepted or not. And make sure to inform our personnel going to the PasaBuy location about the order.</h6></div>
+      <div class="wide-block p-0">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Date</th>
+                        <th scope="col" class="text-center">Mobile</th>
+                        <th scope="col" class="text-center">Name</th>
+                        <th scope="col" class="text-center">Fee</th>
+                        <th scope="col" class="text-center">Location</th>
+                        <th scope="col">Instructions</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="trbodyPB"></tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section full mt-2">
+      <div class="section-title medium">PasaBuy Settings</div>
+      <div class="wide-block pt-2 pb-2">
+        <div class="row">
+          <div class="col-6">Active</div>
+          <div class="col-6 text-right pr-2">
+            <div class="custom-control custom-switch">
+              <input type="checkbox" class="custom-control-input" id="switchPB"/>
+              <label class="custom-control-label" for="switchPB"></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group basic">
+          <div class="input-wrapper">
+            <input type="number" id="fee" class="form-control" placeholder="Fee">
+          </div>
+        </div>
+
+        <div class="form-group basic">
+          <div class="input-wrapper">
+            <input type="text" id="loc" class="form-control" placeholder="Going To?">
+          </div>
+        </div>
+
+        <div class="form-group basic">
+          <div class="input-wrapper">
+            <input type="date" id="etd" class="form-control">
+          </div>
+          <div class="input-info">ETD Date</div>
+        </div>
+        <div class="form-group basic">
+          <div class="input-wrapper">
+            <input type="text" id="etdtime" class="form-control" maxlength="4" placeholder="0700">
+          </div>
+          <div class="input-info">ETD Time</div>
+        </div>
+
+        <div class="form-group basic">
+          <div class="input-wrapper">
+            <input type="date" id="eta" class="form-control">
+          </div>
+          <div class="input-info">ETA Date</div>
+        </div>
+        <div class="form-group basic">
+          <div class="input-wrapper">
+            <input type="text" id="etatime" class="form-control" maxlength="4" placeholder="1800">
+          </div>
+          <div class="input-info">ETA Time</div>
+        </div>
+
+        <button class="btn btn-block btn-success rounded shadowed mt-2" id="savePBDetails">Save</button>
+
+      </div>
+    </div>
+    
+    <span id="test"></span>
+
+  </div>
+  <!-- * App Capsule -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-messaging-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    var messaging = firebase.messaging();
+    const toastWarningTextTop = document.getElementById('toastWarningTextTop');
+    const toastSuccessTextTop = document.getElementById('toastSuccessTextTop');
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+
+    var userdata;
+    var sn;
+    var pasabuyFee;
+
+    window.addEventListener('load', () => {
+      getAdmins().then(admins => {
+        // document.body.style.display = 'block';
+        checkCredentials(admins, parseInt(document.getElementById('pin').value));
+        // Notification
+        db.ref(`AdminUsers/${sn}`).once('value').then(snapshot => {
+          userdata = snapshot.val();
+          if(userdata.notificationToken == null) {
+            document.getElementById('notifSwitch').checked = false;
+          } else if(userdata.notificationToken == 'off'){
+            document.getElementById('notifSwitch').checked = false;
+          } else {
+            document.getElementById('notifSwitch').checked = true;
+          }
+        });
+      });
+    });
+
+    // LISTENERS
+
+    document.getElementById('notifSwitch').addEventListener('change', async () => {
+      if(document.getElementById('notifSwitch').checked) {
+        if (firebase.messaging.isSupported()) {
+            requestPermission();
+        }
+      } else {
+        await axios.post('/admindeleteToken', {
+          sn: sn,
+          notificationToken: userdata.notificationToken
+        }).then(response => {
+          toastSuccessTextTop.innerText = 'Notifications disabled.';
+          toastbox('toastSuccessTop', 3000);
+        }, err => {
+          console.log
+        });
+      }
+    });
+
+    db.ref('Records').orderByChild('date').on('value', snapshot => {
+      let orders = Object.values(snapshot.val()).filter(record => (record.sn.length > 8) && ((record.paid == 'no') || (record.delivered == 'no'))).reverse();
+      document.getElementById('trbody').innerText = '';
+      orders.forEach(rec => {
+        insertRecord(rec);
+      });
+    }, err => {
+      console.log(err);
+    });
+
+    db.ref('Pasabuy').on('value', snapshot => {
+      if(snapshot.val() != null) {
+        pasabuyFee = parseInt(snapshot.val().fee);
+        document.getElementById('switchPB').checked = snapshot.val().active == 'yes' ? true : false;
+        let orders = Object.values(snapshot.val().orders).filter(record => ((record.paid == 'no') || (record.delivered == 'no')));
+        document.getElementById('trbodyPB').innerText = '';
+        orders.forEach(rec => {
+          insertPBRecord(rec);
+        });
+      }
+    }, err => {
+      console.log(err);
+    });
+
+    document.getElementById('savePBDetails').addEventListener('click', () => {
+      if(allFieldsFilled()) {
+        toastbox('toastProcessing');
+        document.getElementById('savePBDetails').disabled = true;
+        db.ref(`Pasabuy/fee`).set(parseInt(document.getElementById('fee').value));
+        db.ref(`Pasabuy/location`).set(document.getElementById('loc').value);
+        // Craft ETD
+        let etdDate = document.getElementById('etd').value;
+        let etaDate = document.getElementById('eta').value;
+        let etdTime = document.getElementById('etdtime').value;
+        let etaTime = document.getElementById('etatime').value;
+        let etdHr = etdTime.toString().substr(0,2);
+        let etdMin = etdTime.toString().substr(2,2);
+        let etaHr = etaTime.toString().substr(0,2);
+        let etaMin = etaTime.toString().substr(2,2);
+        let etd = Date.parse(`${etdDate} ${etdHr}:${etdMin}:00 GMT+08:00`);
+        let eta = Date.parse(`${etaDate} ${etaHr}:${etaMin}:00 GMT+08:00`);
+        console.log(etd);
+        console.log(eta);
+        document.getElementById('savePBDetails').disabled = false;
+        db.ref(`Pasabuy/etd`).set(etd);
+        db.ref(`Pasabuy/eta`).set(eta);
+        setTimeout(()=>{
+          toastSuccessText.innerText = 'Pasabuy details saved';
+          toastbox('toastSuccess');
+        }, 2000);
+      } else {
+        toastErrorText.innerText = "You must fill-out all fields.";
+        toastbox('toastError');
+      }
+    });
+
+    document.getElementById('switchPB').addEventListener('change', async () => {
+      if(document.getElementById('switchPB').checked) {
+        await db.ref('Pasabuy/active').set('yes');
+      } else {
+        await db.ref('Pasabuy/active').set('no');
+      }
+    });
+
+    // FUNCTIONS
+
+    function requestPermission() {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.');
+          document.getElementById('notifSwitch').checked = true;
+          messaging.getToken({ vapidKey: 'BDbhSP9U0LaD4Sn_WSk-omhHAkLOHdGW8VCFGzv5yyZ8ao81vuLFXP6dpGsZtJQ62VR-WJNfLLxM_iMlqaiPmEs' }).then(async (currentToken) => {
+            if (currentToken) {
+                toastProcessingText.innerText = "Please wait. We are generating your notification token.";
+                toastbox('toastProcessing');
+                await axios.post('/adminchangenotiftoken', {
+                    sn: sn,
+                    notificationToken: currentToken
+                }).then(()=>{
+                    toastSuccessText.innerText = 'New notification token set.';
+                    toastbox('toastSuccess');
+                    setTokenSentToServer(true);
+                    window.location.reload();
+                },(err)=>{
+                    console.log(err);
+                    toastErrorText.innerText = err;
+                    toastbox('toastError');
+                })
+            } else {
+              toastWarningTextTop.innerText = 'No registration token available. Request permission to generate one.';
+              toastbox('toastWarningTop', 3000);
+              setTokenSentToServer(false);
+              window.location.reload();
+            }
+          }).catch((err) => {
+            toastWarningTextTop.innerText = 'An error occurred while retrieving token. ' + err;
+            toastbox('toastWarningTop', 3000);
+            setTokenSentToServer(false);
+          });
+        } else {
+          toastWarningTextTop.innerText = 'Unable to get permission to notify.';
+          toastbox('toastWarningTop', 3000);
+        }
+      });
+    }
+
+    function setTokenSentToServer(sent) {
+      window.localStorage.setItem('sentToServer',
+        sent ? '1': '0');
+    }
+
+    function insertRecord(recData) {
+      var tr = document.createElement('tr');
+      var tdDate = document.createElement('td');
+      var tdTid = document.createElement('td');
+      tdTid.innerText = recData.tid;
+      var tdMobile = document.createElement('td');
+      tdMobile.innerText = recData.sn;
+      var tdLocation = document.createElement('td');
+      tdLocation.innerHTML = `<a href='https://www.google.com/maps/@${recData.lat},${recData.long},18z' target='_blank'>Map</a>`;
+      var tdItems = document.createElement('td');
+      var tdSubTotal = document.createElement('td');
+      var tdPayment = document.createElement('td');
+      tdPayment.innerText = recData.payment;
+      var tdActions = document.createElement('td');
+      tdActions.setAttribute('class', 'text-center');
+      if(recData.paid == 'no' && recData.delivered == 'no') {
+        tdActions.innerHTML = `
+          <button id="payBtn${recData.recordId}" class='btn btn-sm btn-outline-danger rounded shadowed p-1 mb-1' onclick="markPaid('${recData.recordId}', ${recData.total}, '${recData.name}', '${recData.mytopic}', '${recData.payment}', '${recData.tid}')">Mark as Paid</button>
+          <button id="deliverBtn${recData.recordId}" class='btn btn-sm btn-outline-warning rounded shadowed p-1' onclick="markDelivered('${recData.recordId}', '${recData.mytopic}')">Mark as Delivered</button>
+        `;
+      } else if(recData.paid == 'yes' && recData.delivered == 'no') {
+        tdActions.innerHTML = `
+          <button id="deliverBtn${recData.recordId}" class='btn btn-sm btn-outline-warning rounded shadowed p-1' onclick="markDelivered('${recData.recordId}', '${recData.mytopic}')">Mark as Delivered</button>
+        `;
+      } else if(recData.paid == 'no' && recData.delivered == 'yes') {
+        tdActions.innerHTML = `
+          <button id="payBtn${recData.recordId}" class='btn btn-sm btn-outline-danger rounded shadowed p-1' onclick="markPaid('${recData.recordId}', ${recData.total}, '${recData.name}', '${recData.mytopic}', '${recData.payment}', '${recData.tid}')">Mark as Paid</button>
+        `;
+      }
+
+      tdDate.setAttribute('scope', 'row');
+      tdDate.setAttribute('class', 'text-center');
+      tdDate.innerHTML = unixToDate(parseInt(recData.date));
+      tdItems.setAttribute('style', 'font-size: 10px');
+      var finalItems = [];
+      recData.items.forEach(i => {
+        finalItems.push(i.replace('|', 'x'));
+      });
+      tdItems.innerText = finalItems.join(', ');
+
+      tdSubTotal.setAttribute('class', 'text-right');
+      tdSubTotal.innerText = `₱${recData.total}`;
+
+      var tdIns = document.createElement('td');
+      tdIns.innerText = `Please deliver ${finalItems.join(', ')} to ${recData.name} (${recData.sn}); Total: ${recData.total} (${recData.payment.toUpperCase()}). Thank you.`;
+      // APPEND
+      tr.appendChild(tdDate);
+      tr.appendChild(tdTid);
+      tr.appendChild(tdMobile);
+      tr.appendChild(tdLocation);
+      tr.appendChild(tdItems);
+      tr.appendChild(tdSubTotal);
+      tr.appendChild(tdPayment);
+      tr.appendChild(tdActions);
+      tr.appendChild(tdIns);
+      document.getElementById('trbody').appendChild(tr);
+    }
+
+    function insertPBRecord(recData) {
+      var tr = document.createElement('tr');
+      var tdDate = document.createElement('td');
+      var tdMobile = document.createElement('td');
+      tdMobile.innerText = recData.mobile;
+      var tdName = document.createElement('td');
+      var tdFee = document.createElement('td');
+      tdName.innerText = recData.name;
+      tdFee.innerText =  `₱${recData.fee}`;
+      var tdLocation = document.createElement('td');
+      tdLocation.innerHTML = `<a href='https://www.google.com/maps/@${recData.lat},${recData.long},18z' target='_blank'>Map</a>`;
+      var tdIns = document.createElement('td');
+      var tdActions = document.createElement('td');
+      tdActions.setAttribute('class', 'text-center');
+      if(recData.paid == 'no' && recData.delivered == 'no') {
+        tdActions.innerHTML = `
+          <button id="payBtn${recData.recordId}" class='btn btn-sm btn-outline-danger rounded shadowed p-1 mb-1' onclick="markPaidPB('${recData.recordId}', '${recData.mytopic}', '${recData.name}', ${parseInt(recData.fee)})">Mark as Paid</button>
+          <button id="deliverBtn${recData.recordId}" class='btn btn-sm btn-outline-warning rounded shadowed p-1' onclick="markDeliveredPB('${recData.recordId}', '${recData.mytopic}', '${recData.name}', ${parseInt(recData.fee)})">Mark as Delivered</button>
+        `;
+      } else if(recData.paid == 'yes' && recData.delivered == 'no') {
+        tdActions.innerHTML = `
+          <button id="deliverBtn${recData.recordId}" class='btn btn-sm btn-outline-warning rounded shadowed p-1' onclick="markDeliveredPB('${recData.recordId}', '${recData.mytopic}', '${recData.name}', ${recData.fee})">Mark as Delivered</button>
+        `;
+      } else if(recData.paid == 'no' && recData.delivered == 'yes') {
+        tdActions.innerHTML = `
+          <button id="payBtn${recData.recordId}" class='btn btn-sm btn-outline-danger rounded shadowed p-1' onclick="markPaidPB('${recData.recordId}', '${recData.mytopic}', '${recData.name}', ${parseInt(recData.fee)})">Mark as Paid</button>
+        `;
+      }
+
+      tdDate.setAttribute('scope', 'row');
+      tdDate.setAttribute('class', 'text-center');
+      tdDate.innerHTML = unixToDate(parseInt(recData.date));
+      tdIns.setAttribute('style', 'font-size: 10px');
+      tdIns.innerHTML = recData.instructions;
+      // APPEND
+      tr.appendChild(tdDate);
+      tr.appendChild(tdMobile);
+      tr.appendChild(tdName);
+      tr.appendChild(tdFee);
+      tr.appendChild(tdLocation);
+      tr.appendChild(tdIns);
+      tr.appendChild(tdActions);
+      document.getElementById('trbodyPB').appendChild(tr);
+    }
+
+    function unixToDate(unixDate) {
+      var d = new Date(unixDate);
+      return `${d.getDate()}-${getMonthName(d.getMonth())}<br>${(d.getHours() <= 9) ? `0${d.getHours()}` : d.getHours()}:${d.getMinutes() <= 9 ? `0${d.getMinutes()}` : d.getMinutes()}`;
+    }
+
+    async function markPaid(rid, amount, name, mytopic, payment, tid) {
+      document.getElementById(`payBtn${rid}`).disabled = true;
+      toastbox('toastProcessing');
+      // Mark user record as paid
+      await axios.post('/markaspaid', {
+        recordId: rid,
+        tid: tid,
+        mytopic: mytopic
+      }).then(response => {
+
+        // Insert to Cash On-hand
+        let d = new Date();
+        let src = `6Cav PX Online Order from ${name} paid through ${payment.toUpperCase()}. TID: ${tid}`;
+        var newCash = db.ref('Cash').push().getKey();
+        db.ref(`Cash/${newCash}`).set({
+          amount: parseInt(amount),
+          date: d.getTime(),
+          source: src
+        });
+        // Add to PX Money
+        db.ref('Bank/px').once('value').then(snapshot => {
+          let oldVal = parseInt(snapshot.val());
+          db.ref('Bank/px').set(oldVal+parseInt(amount));
+          toastSuccessTextTop.innerText = 'Order marked as paid.';
+          toastbox('toastSuccessTop', 2000);
+        });
+
+      }).catch(err => {
+        console.log(err);
+      });
+      
+    }
+    
+    async function markDelivered(rid, mytopic) {
+      document.getElementById(`deliverBtn${rid}`).disabled = true;
+      toastbox('toastProcessing');
+      // Mark user record as paid
+      await axios.post('/markasdelivered', {
+        recordId: rid,
+        mytopic: mytopic
+      }).then(response => {
+
+        toastSuccessTextTop.innerText = 'Order marked as delivered.';
+        toastbox('toastSuccessTop', 2000);
+
+      }).catch(err => {
+        console.log(err);
+      });
+
+    }
+
+    async function markPaidPB(rid, mytopic, name, fee) {
+      document.getElementById(`payBtn${rid}`).disabled = true;
+      toastbox('toastProcessing');
+      // Mark user record as paid
+      await axios.post('/markaspaidpb', {
+        recordId: rid,
+        mytopic: mytopic,
+        name: name,
+        fee: fee
+      }).then(response => {
+
+        // Insert to Cash On-hand
+        let d = new Date();
+        let src = `PasaBuy order from ${name} with ${fee} fee.`;
+        var newCash = db.ref('Cash').push().getKey();
+        db.ref(`Cash/${newCash}`).set({
+          amount: parseInt(fee),
+          date: d.getTime(),
+          source: src
+        });
+        // Add to PX Money
+        db.ref('Bank/px').once('value').then(snapshot => {
+          let oldVal = parseInt(snapshot.val());
+          db.ref('Bank/px').set(oldVal+parseInt(fee));
+          toastSuccessTextTop.innerText = 'PasaBuy Order marked as paid.';
+          toastbox('toastSuccessTop', 2000);
+        });
+
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+
+    async function markDeliveredPB(rid, mytopic, name, fee) {
+      document.getElementById(`deliverBtn${rid}`).disabled = true;
+      toastbox('toastProcessing');
+      // Mark user record as paid
+      await axios.post('/markasdeliveredpb', {
+        recordId: rid,
+        mytopic: mytopic,
+        name: name,
+        fee: fee
+      }).then(response => {
+
+        toastSuccessTextTop.innerText = 'PasaBuy Order marked as delivered.';
+        toastbox('toastSuccessTop', 2000);
+
+      }).catch(err => {
+        console.log(err);
+      });
+    }
+
+    function checkCredentials(admins, pin) {
+      var mySn = window.prompt('Enter your Serial Number: ');
+      if(admins.includes(parseInt(mySn))) {
+        var myPin = window.prompt('Enter PX Pin: ');
+        if(parseInt(myPin) == pin) {
+          sn = mySn;
+          document.body.style.display = 'block';
+        } else {
+          var ansP = confirm('Wrong PIN!');
+          ansP ? window.location = '/admin' : window.location = '/admin';
+        }
+      } else {
+        var ansP = confirm('You are not allowed to view this page!');
+        ansP ? window.location = '/admin' : window.location = '/admin';
+      }
+    }
+
+    async function getAdmins() {
+      let admins;
+      await db.ref('Admins').once('value').then(snapshot => {
+        admins = Object.values(snapshot.val());
+      });
+      return Promise.resolve(admins);
+    }
+    
+    function getMonthName(monthNum) {
+      switch (monthNum) {
+        case 0: return 'Jan'; break;
+        case 1: return 'Feb'; break;
+        case 2: return 'Mar'; break;
+        case 3: return 'Apr'; break;
+        case 4: return 'May'; break;
+        case 5: return 'Jun'; break;
+        case 6: return 'Jul'; break;
+        case 7: return 'Aug'; break;
+        case 8: return 'Sep'; break;
+        case 9: return 'Oct'; break;
+        case 10: return 'Nov'; break;
+        case 11: return 'Dec'; break;
+      }
+    }
+    
+    function getDayName(dayNum) {
+      switch (dayNum) {
+        case 1: return 'Mon'; break;
+        case 2: return 'Tue'; break;
+        case 3: return 'Wed'; break;
+        case 4: return 'Thu'; break;
+        case 5: return 'Fri'; break;
+        case 6: return 'Sat'; break;
+        case 0: return 'Sun'; break;
+      }
+    }
+
+    function numberWithCommas(x) {
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    
+    function resetForm() {
+      document.getElementById('fee').value = '';
+      document.getElementById('loc').value = '';
+      document.getElementById('etd').value = '';
+      document.getElementById('etdtime').value = '';
+      document.getElementById('eta').value = '';
+      document.getElementById('etatime').value = '';
+    }
+    
+    function allFieldsFilled() {
+      if(document.getElementById('fee').value == '' || document.getElementById('loc').value == '' || document.getElementById('etd').value == '' || document.getElementById('etdtime').value == '' || document.getElementById('eta').value == '' || document.getElementById('etatime').value == '') {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  
+  </script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

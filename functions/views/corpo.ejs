@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>Corpo</title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+  
+  <input type="hidden" id="persdata" value="<%= JSON.stringify(persdata)%>" />
+  <input type="hidden" id="user" value="<%= user%>" />
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+      <a href="#" class="headerButton goBack">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      Corpo
+    </div>
+    <div class="right">
+      <a href="#" class="headerButton" data-toggle="modal" data-target="#basketSidebar" id="basketIcon">
+        <ion-icon name="basket-outline"></ion-icon>
+        <scan class="badge badge-danger" id="basketCounter">0</scan>
+      </a>
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+    <div id="toastSuccessTop" class="toast-box toast-top bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessTextTop"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastProcessing" class="toast-box toast-center">
+      <div class="in">
+        <div class="text" id="toastProcessingText">
+          <div class="spinner-border text-light" role="status"></div>
+          <br><br>
+          Please wait...
+        </div>
+      </div>
+    </div>
+
+    <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+      <div class="in">
+        <div class="text" id="toastSuccessText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+
+    <div id="toastError" class="toast-box toast-center bg-danger">
+      <div class="in">
+        <div class="text" id="toastErrorText"></div>
+      </div>
+      <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+    </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <!-- Personnel -->
+    <div class="section inset mt-2" id="corpoList">
+      <div class="wide-block pt-2 pb-2">
+
+        <div class="form-group basic">
+          <div class="input-wrapper">
+            <select class="form-control" id="personnel" multiple="multiple"></select>
+          </div>
+          <div class="input-info">
+            Check all personnel involved in this corpo.
+          </div>
+        </div>
+
+        <div id="chipContainer"></div>
+
+      </div>
+
+      <!-- <button class="btn btn-block btn-outline-success rounded shadowed mt-2" onclick="chooseItems()">Next</button> -->
+
+    </div>
+    <!-- * Personnel -->
+
+    <!-- Personnel -->
+    <div class="section full mt-2" id="store">
+        <h5 class="ml-2">Choose items below to add to your corpo basket.</h5>
+        <div class="accordion" id="items"></div>
+    </div>
+    <!-- * Personnel -->
+
+    <div class="text-center mt-5">
+      <div id="generatedQr"></div>
+    </div>
+    
+    <div class="section full m-2 mt-5">
+      <button class="btn btn-outline-danger btn-block rounded shadowed" onclick="goBackAndEdit()" id="backBtn" style="display: none">Back and Edit Items</button>
+    </div>
+    <div class="section full m-2">
+      <button class="btn btn-primary btn-block rounded shadowed" id="altBtn" style="display: none">Confirm and Proceed</button>
+    </div>
+
+  </div>
+  <!-- * App Capsule -->
+
+  <!-- My Basket Sidebar -->
+  <div class="modal fade panelbox panelbox-right" id="basketSidebar" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content" style="max-width: 250px;">
+        <div class="modal-body p-0" style="max-width: 250px;">
+
+          <div class="section full m-2">
+            <button class="btn btn-success btn-block rounded shadowed" id="checkoutBtn" style="display: none" data-dismiss="modal">Checkout</button>
+          </div>
+
+          <!-- My Basket -->
+          <div class="section full mt-1" id="mybasketsection" style="display: none">
+            <div class="section-title medium">My Basket (Php <span id="total"></span>)</div>
+            <h5 class="ml-2">Click the item to remove it from your basket.</h5>
+            <div class="wide-block pt-2 pb-2">
+              <div class="listview image-listview" id="mybasket"></div>
+            </div>
+          </div>
+          <!-- * My Basket -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- * My Basket Sidebar -->
+  
+  <script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+  <script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+  <script src="/__/firebase/init.js?useEmulator=true"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script type="text/javascript" src="/qrcode-generator/qrcode.js"></script>
+
+  <script type="text/javascript">
+    // VARIABLES
+    var db = firebase.database();
+    const toastSuccessText = document.getElementById('toastSuccessText');
+    const toastErrorText = document.getElementById('toastErrorText');
+    const persdata = JSON.parse(document.getElementById('persdata').value);
+    const user = document.getElementById('user').value;
+
+    var categories = [];
+    var total = 0;
+    var itemsOnBasket = [];
+
+    var qr;
+
+    window.addEventListener('DOMContentLoaded', () => {
+
+      // POPULATE SELECT
+      populateSelect(persdata);
+
+      db.ref('Categories').once('value').then(snapshot => {
+        document.getElementById('items').innerText = '';
+        Object.values(snapshot.val()).forEach(catData => {
+          categories.push(catData.id);
+          insertCategory(catData);
+        });
+
+        db.ref('Items').once('value').then(snapshot => {
+          categories.forEach(cat => {
+            document.getElementById(`box-${cat}`).innerText = '';
+          });
+          Object.values(snapshot.val()).forEach(itemData => {
+            insertItems(itemData);
+          });
+        });
+      });
+
+    });
+
+    // LISTENERS
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+        generateQr();
+      }
+    );
+
+    document.getElementById('personnel').addEventListener('change', (index) => {
+      var selected = document.getElementById('personnel').selectedOptions;
+      document.getElementById('chipContainer').innerText = '';
+      for (let i = 0; i < selected.length; i++) {
+        const element = selected[i];
+        insertChip(element.text);
+      }
+    });
+
+    // FUNCTIONS
+    function populateSelect(persdata) {
+      var blankOpt = document.createElement('option');
+      blankOpt.setAttribute('value', 'X');
+      blankOpt.innerText = 'Select personnel below';
+      blankOpt.disabled = true;
+
+      document.getElementById('personnel').appendChild(blankOpt);
+
+      var pers = Object.values(persdata);
+      pers.forEach(per => {
+        var opt = document.createElement('option');
+        opt.setAttribute('value', per.sn);
+        opt.innerText = `${per.rank} ${per.lname}`;
+        document.getElementById('personnel').appendChild(opt);
+      });
+    }
+
+    function insertChip(str) {
+      var chipDiv = document.createElement('div');
+      chipDiv.setAttribute('class', 'chip chip-success m-1');
+      var spanDiv = document.createElement('span');
+      spanDiv.setAttribute('class', 'chip-label');
+      spanDiv.innerText = str;
+      // APPEND
+      chipDiv.appendChild(spanDiv);
+      document.getElementById('chipContainer').appendChild(chipDiv);
+    }
+
+    function chooseItems() {
+      document.getElementById('corpoList').style.display = 'none';
+      document.getElementById('store').style.display = 'block';
+      document.getElementById('basketIcon').style.display = 'block';
+    }
+
+    function insertCategory(catData) {
+      var item = document.createElement('div');
+      item.setAttribute('class', 'item');
+      var ah = document.createElement('div');
+      ah.setAttribute('class', 'accordion-header');
+      var ab = document.createElement('div');
+      ab.setAttribute('class', 'accordion-body collapse');
+      ab.setAttribute('id', `id-${catData.id}`);
+      ab.setAttribute('data-parent', '#items');
+      var ahbtn = document.createElement('button');
+      ahbtn.setAttribute('class', 'btn collapsed');
+      ahbtn.setAttribute('type', 'button');
+      ahbtn.setAttribute('data-toggle', 'collapse');
+      ahbtn.setAttribute('data-target', `#id-${catData.id}`);
+      ahbtn.innerText = `${catData.title}`;
+      var ac = document.createElement('div');
+      ac.setAttribute('class', 'accordion-content');
+
+      var ul = document.createElement('ul');
+      ul.setAttribute('class', 'listview image-listview');
+      ul.setAttribute('id', `box-${catData.id}`);
+
+      // APPEND
+      ac.appendChild(ul);
+      ab.appendChild(ac);
+      ah.appendChild(ahbtn);
+      item.appendChild(ah);
+      item.appendChild(ab);
+      document.getElementById('items').appendChild(item);
+    }
+    
+    function insertItems(itemData) {
+      var li = document.createElement('li');
+      var itemDiv = document.createElement('div');
+      var itemImg = document.createElement('img');
+      var inDiv = document.createElement('div');
+      var itemNameDiv = document.createElement('div');
+      var priceDiv = document.createElement('span');
+      
+      itemDiv.setAttribute('class', 'item');
+      itemImg.setAttribute('class', 'imaged w48 square');
+      itemImg.setAttribute('src', dropboxURL(itemData.image));
+      inDiv.setAttribute('class', 'in');
+      priceDiv.setAttribute('class', 'badge badge-success');
+      priceDiv.innerText = itemData.price;
+      
+      if(itemData.available == 'no') {
+        itemImg.setAttribute('style', 'opacity: 0.5');
+        itemNameDiv.innerHTML = `<span><del>${itemData.name}</del></span>`;
+        li.setAttribute('onclick', `notifyNotAvailable('${itemData.name}')`);
+      } else {
+        itemNameDiv.innerHTML = `<span>${itemData.name}</span>`;
+        li.setAttribute('onclick', `insertToBasket('${JSON.stringify(itemData)}')`);
+      }
+
+      // APPEND
+      inDiv.appendChild(itemNameDiv);
+      inDiv.appendChild(priceDiv);
+      itemDiv.appendChild(itemImg);
+      itemDiv.appendChild(inDiv);
+      li.appendChild(itemDiv);
+      document.getElementById(`box-${itemData.category}`).appendChild(li);
+    }
+
+    function notifyNotAvailable(itemName) {
+      toastErrorText.innerText = `Sorry but ${itemName} is not available now.`;
+      toastbox('toastError');
+    }
+
+    function insertToBasket(itemDataString) {
+        var itemData = JSON.parse(itemDataString);
+        var li = document.createElement('li');
+        li.setAttribute('id', `basket-${itemData.id}`);
+        li.setAttribute('onclick', `removeFromBasket('${itemData.id}', ${itemData.price})`);
+        var itemDiv = document.createElement('div');
+        itemDiv.setAttribute('class', 'item');
+        var itemImg = document.createElement('img');
+        itemImg.setAttribute('class', 'imaged w48 square');
+        itemImg.setAttribute('src', dropboxURL(itemData.image));
+        var inDiv = document.createElement('div');
+        inDiv.setAttribute('class', 'in');
+        var itemNameDiv = document.createElement('div');
+        itemNameDiv.innerText = itemData.name;
+        var priceDiv = document.createElement('span');
+        priceDiv.setAttribute('class', 'badge badge-success');
+        priceDiv.innerText = itemData.price;
+        
+        // Update Total
+        total = total + itemData.price;
+        document.getElementById('total').innerText = total;
+        document.getElementById('mybasketsection').style.display = 'block';
+        document.getElementById('checkoutBtn').style.display = 'block';
+        
+        // Update Items on Basket
+        itemsOnBasket.push(itemData.id);
+  
+        // APPEND
+        inDiv.appendChild(itemNameDiv);
+        inDiv.appendChild(priceDiv);
+        itemDiv.appendChild(itemImg);
+        itemDiv.appendChild(inDiv);
+        li.appendChild(itemDiv);
+        document.getElementById(`mybasket`).appendChild(li);
+
+        // Blink the basket
+        document.getElementById('basketIcon').style.display = 'none';
+        setTimeout(function(){ document.getElementById('basketIcon').style.display = 'block'; }, 200);
+
+        // Update basket badge
+        document.getElementById('basketCounter').innerText = itemsOnBasket.length;
+        //if(total > 0) {
+          //document.getElementById('basketCounter').style.display = 'in-line';
+        //} else {
+          //document.getElementById('basketCounter').style.display = 'none';
+        //}
+    }
+
+    function removeFromBasket(id, price) {
+      // Update Total
+      total = total - price;
+      document.getElementById('total').innerText = total;
+      document.getElementById('mybasket').removeChild(document.getElementById(`basket-${id}`));
+      // Update items on basket
+      itemsOnBasket.splice(itemsOnBasket.indexOf(id), 1);
+      if(total <= 0) {
+        document.getElementById('mybasketsection').style.display = 'none';
+        document.getElementById('checkoutBtn').style.display = 'none';
+        document.getElementById('basketCounter').innerText = 0;
+      } else {
+        document.getElementById('mybasketsection').style.display = 'block';
+        document.getElementById('checkoutBtn').style.display = 'block';
+        document.getElementById('basketCounter').innerText = itemsOnBasket.length;
+      }
+    }
+    
+    function generateQr() {
+      document.getElementById('backBtn').style.display = 'block';
+      document.getElementById('altBtn').style.display = 'block';
+      document.getElementById('basketIcon').style.display = 'none';
+      document.getElementById('store').style.display = 'none';
+      document.getElementById('mybasketsection').style.display = 'none';
+      document.getElementById('checkoutBtn').style.display = 'none';
+    }
+
+    function simplifyItems(arr) {
+      var finalArr = [];
+      arr.forEach(item => {
+        finalArr.push(`${item} | ${arr.filter(element => element === item).length}`);
+      });
+      return [...new Set(finalArr)];
+    }
+    
+    function goBackAndEdit() {
+      // document.getElementById('generatedQr').style.display = 'none';
+      document.getElementById('backBtn').style.display = 'none';
+      document.getElementById('altBtn').style.display = 'none';
+      // document.getElementById('finishBtn').style.display = 'none';
+      document.getElementById('basketIcon').style.display = 'block';
+      document.getElementById('store').style.display = 'block';
+      document.getElementById('mybasketsection').style.display = 'block';
+      document.getElementById('checkoutBtn').style.display = 'block';
+    }
+
+    function dropboxURL(link) {
+      var base = link.split('?')[0];
+      var fileId = base.split('/')[4];
+      var fileName = base.split('/')[5]; 
+      return `https://dl.dropboxusercontent.com/s/${fileId}/${fileName}`;
+    }
+
+    function getMonthName(monthNum) {
+      switch (monthNum) {
+        case 0: return 'Jan'; break;
+        case 1: return 'Feb'; break;
+        case 2: return 'Mar'; break;
+        case 3: return 'Apr'; break;
+        case 4: return 'May'; break;
+        case 5: return 'Jun'; break;
+        case 6: return 'Jul'; break;
+        case 7: return 'Aug'; break;
+        case 8: return 'Sep'; break;
+        case 9: return 'Oct'; break;
+        case 10: return 'Nov'; break;
+        case 11: return 'Dec'; break;
+      }
+    }
+    
+    function getDayName(dayNum) {
+      switch (dayNum) {
+        case 1: return 'Mon'; break;
+        case 2: return 'Tue'; break;
+        case 3: return 'Wed'; break;
+        case 4: return 'Thu'; break;
+        case 5: return 'Fri'; break;
+        case 6: return 'Sat'; break;
+        case 0: return 'Sun'; break;
+      }
+    }
+
+    document.getElementById('altBtn').addEventListener('click', async () => {
+      document.getElementById('altBtn').disabled = true;
+      toastbox('toastProcessing');
+      var corpo = [];
+      var selected = document.getElementById('personnel').selectedOptions;
+      for (let i = 0; i < selected.length; i++) {
+        const element = selected[i];
+        corpo.push(element.value);
+      }
+      var d = new Date();
+      var itemsToRecord = simplifyItems(itemsOnBasket);
+      var corpoType = 'yes';
+      await axios.post('/altrecord', {
+        sn: corpo.join('_'),
+        date: d.getTime(),
+        total: total,
+        corpo: corpoType,
+        items: itemsToRecord.join('_'),
+      }).then(response => {
+        window.location = `/altmyrecord/${user}`;
+      }).catch(err => {
+        console.log(err);
+      });
+    });
+    
+  </script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>

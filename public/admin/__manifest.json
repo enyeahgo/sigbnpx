@@ -1,0 +1,20 @@
+{
+  "name": "Sixcavcoy PX",
+  "short_name": "Sixcavcoy PX",
+  "description": "PX Manager Robot of Sixcavcoy",
+  "icons": [{
+    "src": "/assets/img/logo-icon.png",
+    "type": "image/png",
+    "sizes": "180x180"
+  },
+    {
+      "src": "/assets/img/logo-icon.png",
+      "type": "image/png",
+      "sizes": "214x214"
+    }],
+  "theme_color": "#006400",
+  "background_color": "#006400",
+  "display": "fullscreen",
+  "scope": "/admin",
+  "start_url": "/admin"
+}

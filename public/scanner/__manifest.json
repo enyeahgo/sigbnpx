@@ -1,0 +1,20 @@
+{
+  "name": "6CAV PX Scanner",
+  "short_name": "6CAV PX Scanner",
+  "description": "6CAV PX Scanner",
+  "icons": [{
+    "src": "/assets/img/logo-icon.png",
+    "type": "image/png",
+    "sizes": "180x180"
+  },
+    {
+      "src": "/assets/img/logo-icon.png",
+      "type": "image/png",
+      "sizes": "214x214"
+    }],
+  "theme_color": "#006400",
+  "background_color": "#006400",
+  "display": "fullscreen",
+  "scope": "/",
+  "start_url": "/scanner"
+}

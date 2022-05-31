@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport"
+  content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#006400">
+  <title>6CAV PX REGISTER</title>
+
+  <link rel="icon" type="image/png" href="/assets/img/logo-icon.png" sizes="32x32">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/logo-icon.png">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <!-- Additional Scripts -->
+  <script type="module" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule="" src="https://unpkg.com/ionicons%405.0.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+  <!-- loader -->
+  <div id="loader" style="background-color: #006400">
+    <img src="/assets/img/logo-icon.png" alt="icon" class="loading-icon">
+  </div>
+  <!-- * loader -->
+
+  <!-- App Header -->
+  <div class="appHeader bg-success text-light">
+    <div class="left">
+      <a href="#" class="headerButton goBack">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </a>
+    </div>
+    <div class="pageTitle">
+      REGISTER
+    </div>
+    <div class="right">
+    </div>
+  </div>
+  <!-- * App Header -->
+
+  <!-- App Capsule -->
+  <div id="appCapsule">
+    
+    <!-- TOASTBOXES -->
+    <div>
+      <div id="toastSuccessTop" class="toast-box toast-top bg-success tap-to-close">
+        <div class="in">
+          <div class="text" id="toastSuccessTextTop"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+      </div>
+
+      <div id="toastProcessing" class="toast-box toast-center">
+        <div class="in">
+          <div class="text" id="toastProcessingText">
+            <div class="spinner-border text-light" role="status"></div>
+            <br><br>
+            Please wait...
+          </div>
+        </div>
+      </div>
+
+      <div id="toastSuccess" class="toast-box toast-center bg-success tap-to-close">
+        <div class="in">
+          <div class="text" id="toastSuccessText"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button">OKAY</button>
+      </div>
+
+      <div id="toastError" class="toast-box toast-center bg-danger">
+        <div class="in">
+          <div class="text" id="toastErrorText"></div>
+        </div>
+        <button type="button" class="btn btn-sm btn-text-light close-button" onclick="window.location = '/';">OKAY</button>
+      </div>
+    </div>
+    <!-- * TOASTBOXES -->
+
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="col-sm-6">
+          
+          <div class="section inset mt-2" id="theForm">
+            <div class="section-title medium">Please enter your mobile number</div>
+            <div class="wide-block pt-2 pb-2">
+              <form id="sign-in-form" action="#">
+      
+                <div class="form-group basic">
+                  <div class="input-wrapper">
+                    <input type="number" class="form-control" style="font-size: 20px;" id="phone-number" maxlength="11" placeholder="09123456789">
+                  </div>
+                  <div class="input-info">
+                    <span>Enter your 11-digit mobile number</span>
+                  </div>
+                </div>
+      
+                <button class="btn btn-block btn-success rounded shadowed" id="sign-in-button" disabled>Register</button>
+                <div class="text-center mt-2">
+                  <span class="text-muted">Already have an account? <a href="/login">Login</a></span>
+                </div>
+      
+              </form>
+            </div>
+          </div>
+      
+          <div class="section inset p-2 text-center" id="theRecaptcha">
+            <div class="text-center">
+              <div id="recaptcha-container"></div>
+            </div>
+          </div>
+      
+          <div class="section inset mt-2" id="theOtp" style="display: none;">
+            <div class="section-title small">Please enter the OTP sent to your phone</div>
+            <div class="wide-block pt-2 pb-2">
+              <div class="form-group basic">
+                <div class="input-wrapper">
+                  <input type="number" class="form-control" style="font-size: 20px;" id="otp">
+                </div>
+                <div class="input-info">
+                  <span>6-digit OTP</span>
+                </div>
+              </div>
+              <button class="btn btn-block btn-success rounded shadowed" id="sendOtp" disabled>Submit</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+  <!-- * App Capsule -->
+
+<script src="/__/firebase/9.2.0/firebase-app-compat.js"></script>
+<script src="/__/firebase/9.2.0/firebase-auth-compat.js"></script>
+<script src="/__/firebase/9.2.0/firebase-database-compat.js"></script>
+<script src="/__/firebase/init.js?useEmulator=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.4/axios.min.js" integrity="sha512-lTLt+W7MrmDfKam+r3D2LURu0F47a3QaW5nF0c6Hl0JDZ57ruei+ovbg7BrZ+0bjVJ5YgzsAWE+RreERbpPE1g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script type="text/javascript">
+  // VARIABLES
+  var confirmRes;
+
+  window.addEventListener('load', () => {
+    document.getElementById('sign-in-form').addEventListener('submit', onSignInSubmit);
+    document.getElementById('phone-number').addEventListener('keyup', updateSignInButtonUI);
+    document.getElementById('phone-number').addEventListener('change', updateSignInButtonUI);
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+  });
+
+  // LISTENERS
+  document.getElementById('sendOtp').addEventListener('click', () => {
+    toastbox('toastProcessing');
+    confirmRes.confirm(document.getElementById('otp').value).then(async (data) => {
+      if(data.additionalUserInfo.isNewUser) {
+        await axios.post('/register', {
+          uid: data.user._delegate.uid,
+          mobile: document.getElementById('phone-number').value,
+          mytopic: Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 8)
+        }).then(response => {
+          window.location = '/init';
+        });
+      } else {
+        await axios.post('/login', {
+          uid: data.user._delegate.uid,
+          mobile: document.getElementById('phone-number').value,
+        }).then(response => {
+          window.location = '/';
+        });
+      }
+    }).catch(function (error) {
+      // User couldn't sign in (bad verification code?)
+      console.error('Error while checking the verification code', error);
+      document.getElementById('toastErrorText').innerText = 'Error while checking the verification code:\n\n' + error.code + '\n\n' + error.message;
+      toastbox('toastError');
+    });
+  });
+
+  document.getElementById('otp').addEventListener('keyup', () => {
+    if(document.getElementById('otp').value.length == 6) {
+      document.getElementById('sendOtp').disabled = false;
+    } else {
+      document.getElementById('sendOtp').disabled = true;
+    }
+  });
+
+  function onSignInSubmit(e) {
+    e.preventDefault();
+    if (isPhoneNumberValid()) {
+      window.signingIn = true;
+      updateSignInButtonUI();
+      var phoneNumber = getPhoneNumberFromUserInput();
+      var appVerifier = window.recaptchaVerifier;
+      firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
+          .then(function(confirmationResult) {
+            confirmRes = confirmationResult;
+            document.getElementById('theForm').style.display = 'none';
+            document.getElementById('theRecaptcha').style.display = 'none';
+            // toastbox('toastProcessing');
+            window.signingIn = false;
+            updateSignInButtonUI();
+            resetRecaptcha();
+            // Show the OTP form
+            document.getElementById('theOtp').style.display = 'block';
+          }).catch(function(error) {
+            // Error; SMS not sent
+            window.signingIn = false;
+            console.error('Error during signInWithPhoneNumber', error);
+            document.getElementById('toastErrorText').innerText = 'Error during signInWithPhoneNumber:\n\n' + error.code + '\n\n' + error.message;
+            toastbox('toastError');
+            updateSignInButtonUI();
+            resetRecaptcha();
+          });
+    } else {
+      document.getElementById('toastErrorText').innerText = 'Please input 11-digit number starting with zero.';
+      toastbox('toastError');
+    }
+  }
+
+  function getPhoneNumberFromUserInput() {
+    var theNumber = document.getElementById('phone-number').value;
+    var finalMobile = (theNumber.charAt(0) === '0' || theNumber.charAt(0) === 0) ? `+63${theNumber.substring(1, theNumber.length)}` : `+63${theNumber}`;
+    return finalMobile;
+  }
+
+  function isPhoneNumberValid() {
+    if(document.getElementById('phone-number').value.length == 11) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function resetRecaptcha() {
+    return window.recaptchaVerifier.render().then(function(widgetId) {
+      grecaptcha.reset(widgetId);
+    });
+  }
+
+  function updateSignInButtonUI() {
+    document.getElementById('sign-in-button').disabled = !isPhoneNumberValid() || !!window.signingIn;
+  }
+
+</script>
+
+  <!-- Jquery -->
+  <script src="/assets/js/lib/jquery-3.4.1.min.js"></script>
+  <!-- jQuery Circle Progress -->
+  <script src="/assets/js/plugins/jquery-circle-progress/circle-progress.min.js"></script>
+  <!-- Owl Carousel -->
+  <script src="/assets/js/plugins/owl-carousel/owl.carousel.min.js"></script>
+  <!-- Bootstrap-->
+  <script src="/assets/js/lib/bootstrap.min.js"></script>
+  <!-- Popper-->
+  <script src="/assets/js/lib/popper.min.js"></script>
+  <!-- Base Js File -->
+  <script src="/assets/js/base.js"></script>
+
+</body>
+</html>
