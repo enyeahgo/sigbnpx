@@ -1,10 +1,10 @@
 var admin = require("firebase-admin");
 
-var serviceAccount = require("./services/sixcavcoypx-firebase-adminsdk-olugw-eae5cc62db.json");
+var serviceAccount = require("<insert path of your service account json file>");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://sixcavcoypx-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  databaseURL: "<insert your firebase database URL>"
 });
 
 module.exports = admin;
